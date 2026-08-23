@@ -27,7 +27,7 @@ export default async function OrdersPage({
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-slate-900">Orders</h1>
+      <h1 className="font-heading text-xl font-bold text-foreground">Orders</h1>
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <StatCard label="Total orders" value={stats.total} />
@@ -37,14 +37,14 @@ export default async function OrdersPage({
       </div>
 
       <form className="mt-6 flex gap-2" method="GET">
-        <select name="status" defaultValue={params.status || ''} className="rounded-md border border-slate-300 px-3 py-1.5 text-sm">
+        <select name="status" defaultValue={params.status || ''} className="rounded-full border border-border bg-card px-3 py-1.5 text-sm focus:border-primary focus:outline-none">
           <option value="">All statuses</option>
           <option value="pending">Pending</option>
           <option value="processing">Processing</option>
           <option value="completed">Completed</option>
           <option value="cancelled">Cancelled</option>
         </select>
-        <button type="submit" className="rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white">
+        <button type="submit" className="rounded-full bg-primary px-4 py-1.5 font-heading text-sm font-bold text-primary-foreground hover:bg-primary-hover">
           Filter
         </button>
       </form>

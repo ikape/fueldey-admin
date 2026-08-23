@@ -12,10 +12,10 @@ export default async function KycReviewPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-slate-900">KYC review</h1>
+      <h1 className="font-heading text-xl font-bold text-foreground">KYC review</h1>
 
       <section className="mt-6">
-        <h2 className="text-sm font-medium text-slate-700">Users awaiting KYCAID verification ({pendingUsers.total})</h2>
+        <h2 className="font-heading text-sm font-semibold text-foreground">Users awaiting KYCAID verification ({pendingUsers.total})</h2>
         <div className="mt-2">
           <DataTable<AdminUser>
             rows={pendingUsers.data}
@@ -24,7 +24,7 @@ export default async function KycReviewPage() {
               {
                 header: 'Name',
                 render: (u) => (
-                  <Link href={`/dashboard/users/${u.id}`} className="font-medium text-slate-900 hover:underline">
+                  <Link href={`/dashboard/users/${u.id}`} className="font-medium text-primary hover:underline">
                     {u.fullName}
                   </Link>
                 ),
@@ -37,7 +37,7 @@ export default async function KycReviewPage() {
       </section>
 
       <section className="mt-8">
-        <h2 className="text-sm font-medium text-slate-700">Documents pending manual review ({pendingDocuments.total})</h2>
+        <h2 className="font-heading text-sm font-semibold text-foreground">Documents pending manual review ({pendingDocuments.total})</h2>
         <div className="mt-2">
           <DataTable<AdminDocument>
             rows={pendingDocuments.data}
@@ -48,7 +48,7 @@ export default async function KycReviewPage() {
               { header: 'Type', render: (d) => d.type },
               {
                 header: 'File',
-                render: (d) => (d.fileUrl ? <a href={d.fileUrl} target="_blank" className="text-blue-600 hover:underline">View</a> : '—'),
+                render: (d) => (d.fileUrl ? <a href={d.fileUrl} target="_blank" className="text-primary hover:underline">View</a> : '—'),
               },
               { header: 'Actions', render: (d) => <DocumentReviewControls documentId={d.id} /> },
             ]}

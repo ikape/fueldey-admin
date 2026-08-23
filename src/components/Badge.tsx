@@ -1,14 +1,14 @@
 const TONES: Record<string, string> = {
-  green: 'bg-green-50 text-green-700',
-  red: 'bg-red-50 text-red-700',
-  yellow: 'bg-yellow-50 text-yellow-700',
-  gray: 'bg-slate-100 text-slate-600',
-  blue: 'bg-blue-50 text-blue-700',
+  green: 'bg-success-bg text-primary',
+  red: 'bg-danger-bg text-danger',
+  yellow: 'bg-warning-bg text-accent-foreground',
+  gray: 'bg-border/60 text-muted',
+  blue: 'bg-primary/10 text-primary',
 };
 
 export function Badge({ children, tone = 'gray' }: { children: React.ReactNode; tone?: keyof typeof TONES }) {
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${TONES[tone]}`}>
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${TONES[tone]}`}>
       {children}
     </span>
   );

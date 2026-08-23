@@ -17,18 +17,18 @@ export default async function WalletPage({
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-slate-900">Wallet</h1>
+      <h1 className="font-heading text-xl font-bold text-foreground">Wallet</h1>
 
-      <div className="mt-4 flex gap-2 border-b border-slate-200">
+      <div className="mt-4 flex gap-2 border-b border-border">
         <Link
           href="/dashboard/wallet?tab=withdrawals"
-          className={`px-3 py-2 text-sm ${tab === 'withdrawals' ? 'border-b-2 border-slate-900 font-medium text-slate-900' : 'text-slate-500'}`}
+          className={`px-3 py-2 text-sm ${tab === 'withdrawals' ? 'border-b-2 border-primary font-semibold text-primary' : 'text-muted'}`}
         >
           Pending withdrawals
         </Link>
         <Link
           href="/dashboard/wallet?tab=transactions"
-          className={`px-3 py-2 text-sm ${tab === 'transactions' ? 'border-b-2 border-slate-900 font-medium text-slate-900' : 'text-slate-500'}`}
+          className={`px-3 py-2 text-sm ${tab === 'transactions' ? 'border-b-2 border-primary font-semibold text-primary' : 'text-muted'}`}
         >
           All transactions
         </Link>

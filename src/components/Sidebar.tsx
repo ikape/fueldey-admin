@@ -14,14 +14,14 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   return (
-    <nav className="w-56 shrink-0 border-r border-slate-200 bg-white p-4">
-      <p className="px-2 text-lg font-semibold text-slate-900">FuelDey Admin</p>
+    <nav className="w-56 shrink-0 border-r border-border bg-card p-4">
+      <p className="px-2 font-heading text-lg font-extrabold text-primary">FuelDey Admin</p>
       <ul className="mt-6 space-y-1">
         {NAV_ITEMS.map((item) => (
           <li key={item.href}>
             <Link
               href={item.href}
-              className="block rounded-md px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              className="block rounded-full px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-primary/10 hover:text-primary"
             >
               {item.label}
             </Link>

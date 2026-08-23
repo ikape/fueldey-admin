@@ -19,7 +19,7 @@ export default async function UsersPage({
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-slate-900">Users</h1>
+      <h1 className="font-heading text-xl font-bold text-foreground">Users</h1>
 
       <form className="mt-4 flex flex-wrap gap-2" method="GET">
         <input
@@ -27,22 +27,22 @@ export default async function UsersPage({
           name="search"
           defaultValue={params.search}
           placeholder="Search name, email, phone"
-          className="rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+          className="rounded-full border border-border bg-card px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
         />
-        <select name="role" defaultValue={params.role || ''} className="rounded-md border border-slate-300 px-3 py-1.5 text-sm">
+        <select name="role" defaultValue={params.role || ''} className="rounded-full border border-border bg-card px-3 py-1.5 text-sm focus:border-primary focus:outline-none">
           <option value="">All roles</option>
           <option value="commuter">Commuter</option>
           <option value="vendor">Vendor</option>
           <option value="admin">Admin</option>
         </select>
-        <select name="kycStatus" defaultValue={params.kycStatus || ''} className="rounded-md border border-slate-300 px-3 py-1.5 text-sm">
+        <select name="kycStatus" defaultValue={params.kycStatus || ''} className="rounded-full border border-border bg-card px-3 py-1.5 text-sm focus:border-primary focus:outline-none">
           <option value="">All KYC statuses</option>
           <option value="not_submitted">Not submitted</option>
           <option value="pending">Pending</option>
           <option value="approved">Approved</option>
           <option value="rejected">Rejected</option>
         </select>
-        <button type="submit" className="rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white">
+        <button type="submit" className="rounded-full bg-primary px-4 py-1.5 font-heading text-sm font-bold text-primary-foreground hover:bg-primary-hover">
           Filter
         </button>
       </form>
@@ -54,7 +54,7 @@ export default async function UsersPage({
             {
               header: 'Name',
               render: (u) => (
-                <Link href={`/dashboard/users/${u.id}`} className="font-medium text-slate-900 hover:underline">
+                <Link href={`/dashboard/users/${u.id}`} className="font-medium text-primary hover:underline">
                   {u.fullName}
                 </Link>
               ),

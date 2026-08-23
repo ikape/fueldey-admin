@@ -13,14 +13,14 @@ export function StationControls({ stationId, isActive, isOpen }: { stationId: st
       <button
         disabled={isPending}
         onClick={() => startTransition(() => updateStationStatusAction(stationId, { isActive: !isActive }))}
-        className="rounded-md border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-50"
+        className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium hover:border-primary hover:text-primary disabled:opacity-50"
       >
         {isActive ? 'Deactivate station' : 'Activate station'}
       </button>
       <button
         disabled={isPending}
         onClick={() => startTransition(() => updateStationStatusAction(stationId, { isOpen: !isOpen }))}
-        className="rounded-md border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-50"
+        className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium hover:border-primary hover:text-primary disabled:opacity-50"
       >
         {isOpen ? 'Mark closed' : 'Mark open'}
       </button>
@@ -33,7 +33,7 @@ export function StationControls({ stationId, isActive, isOpen }: { stationId: st
             router.push('/dashboard/vendors');
           });
         }}
-        className="rounded-md border border-red-300 px-3 py-1.5 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50"
+        className="rounded-full border border-danger/40 px-4 py-1.5 text-sm font-medium text-danger hover:bg-danger-bg disabled:opacity-50"
       >
         Delete station
       </button>

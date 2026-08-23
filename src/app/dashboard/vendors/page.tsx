@@ -19,7 +19,7 @@ export default async function VendorsPage({
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-slate-900">Vendors & Stations</h1>
+      <h1 className="font-heading text-xl font-bold text-foreground">Vendors & Stations</h1>
 
       <form className="mt-4 flex flex-wrap gap-2" method="GET">
         <input
@@ -27,14 +27,14 @@ export default async function VendorsPage({
           name="search"
           defaultValue={params.search}
           placeholder="Search name or address"
-          className="rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+          className="rounded-full border border-border bg-card px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
         />
-        <select name="isActive" defaultValue={params.isActive || ''} className="rounded-md border border-slate-300 px-3 py-1.5 text-sm">
+        <select name="isActive" defaultValue={params.isActive || ''} className="rounded-full border border-border bg-card px-3 py-1.5 text-sm focus:border-primary focus:outline-none">
           <option value="">All statuses</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
-        <button type="submit" className="rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white">
+        <button type="submit" className="rounded-full bg-primary px-4 py-1.5 font-heading text-sm font-bold text-primary-foreground hover:bg-primary-hover">
           Filter
         </button>
       </form>
@@ -46,7 +46,7 @@ export default async function VendorsPage({
             {
               header: 'Name',
               render: (s) => (
-                <Link href={`/dashboard/vendors/${s.id}`} className="font-medium text-slate-900 hover:underline">
+                <Link href={`/dashboard/vendors/${s.id}`} className="font-medium text-primary hover:underline">
                   {s.name}
                 </Link>
               ),

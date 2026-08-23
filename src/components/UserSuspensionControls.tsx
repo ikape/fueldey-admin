@@ -12,7 +12,7 @@ export function UserSuspensionControls({ userId, isSuspended }: { userId: string
       <button
         disabled={isPending}
         onClick={() => startTransition(() => reactivateUserAction(userId))}
-        className="rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white disabled:opacity-50"
+        className="rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
       >
         Reactivate
       </button>
@@ -26,12 +26,12 @@ export function UserSuspensionControls({ userId, isSuspended }: { userId: string
         value={reason}
         onChange={(e) => setReason(e.target.value)}
         placeholder="Reason (optional)"
-        className="rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+        className="rounded-full border border-border bg-card px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
       />
       <button
         disabled={isPending}
         onClick={() => startTransition(() => suspendUserAction(userId, reason))}
-        className="rounded-md bg-red-600 px-3 py-1.5 text-sm text-white disabled:opacity-50"
+        className="rounded-full bg-danger px-4 py-1.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
       >
         Suspend
       </button>

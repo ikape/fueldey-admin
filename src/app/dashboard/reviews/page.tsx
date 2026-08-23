@@ -16,7 +16,7 @@ export default async function ReviewsPage({
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-slate-900">Reviews</h1>
+      <h1 className="font-heading text-xl font-bold text-foreground">Reviews</h1>
 
       <div className="mt-4">
         <DataTable<AdminReview>

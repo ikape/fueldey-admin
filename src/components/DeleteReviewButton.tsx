@@ -13,7 +13,7 @@ export function DeleteReviewButton({ reviewId }: { reviewId: string }) {
         if (!confirm('Delete this review?')) return;
         startTransition(() => deleteReviewAction(reviewId));
       }}
-      className="rounded-md border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50 disabled:opacity-50"
+      className="rounded-full border border-danger/40 px-3 py-1 text-xs font-medium text-danger hover:bg-danger-bg disabled:opacity-50"
     >
       Delete
     </button>

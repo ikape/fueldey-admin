@@ -12,7 +12,7 @@ export function DocumentReviewControls({ documentId }: { documentId: string }) {
       <button
         disabled={isPending}
         onClick={() => startTransition(() => approveDocumentAction(documentId))}
-        className="rounded-md bg-green-600 px-3 py-1 text-xs text-white disabled:opacity-50"
+        className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
       >
         Approve
       </button>
@@ -21,12 +21,12 @@ export function DocumentReviewControls({ documentId }: { documentId: string }) {
         value={reason}
         onChange={(e) => setReason(e.target.value)}
         placeholder="Rejection reason"
-        className="rounded-md border border-slate-300 px-2 py-1 text-xs"
+        className="rounded-full border border-border bg-card px-2 py-1 text-xs focus:border-primary focus:outline-none"
       />
       <button
         disabled={isPending || !reason}
         onClick={() => startTransition(() => rejectDocumentAction(documentId, reason))}
-        className="rounded-md bg-red-600 px-3 py-1 text-xs text-white disabled:opacity-50"
+        className="rounded-full bg-danger px-3 py-1 text-xs font-semibold text-white hover:opacity-90 disabled:opacity-50"
       >
         Reject
       </button>

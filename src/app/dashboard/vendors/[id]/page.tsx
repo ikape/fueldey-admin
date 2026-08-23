@@ -10,22 +10,22 @@ export default async function StationDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-xl font-semibold text-slate-900">{station.name}</h1>
-      <p className="text-sm text-slate-500">{station.address}</p>
+      <h1 className="font-heading text-xl font-bold text-foreground">{station.name}</h1>
+      <p className="text-sm text-muted">{station.address}</p>
 
       <div className="mt-6 flex gap-2">
         <Badge tone={station.isActive ? 'green' : 'red'}>{station.isActive ? 'Active' : 'Inactive'}</Badge>
         <Badge tone={station.isOpen ? 'green' : 'gray'}>{station.isOpen ? 'Open' : 'Closed'}</Badge>
       </div>
 
-      <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4 text-sm">
-        <p><span className="text-slate-500">Phone:</span> {station.phone || '—'}</p>
-        <p className="mt-1"><span className="text-slate-500">Vendor ID:</span> {station.vendorId}</p>
+      <div className="mt-4 rounded-2xl border border-border bg-card p-4 text-sm">
+        <p><span className="text-muted">Phone:</span> {station.phone || '—'}</p>
+        <p className="mt-1"><span className="text-muted">Vendor ID:</span> {station.vendorId}</p>
       </div>
 
       {station.inventory && station.inventory.length > 0 && (
         <div className="mt-6">
-          <h2 className="text-sm font-medium text-slate-700">Fuel inventory</h2>
+          <h2 className="font-heading text-sm font-semibold text-foreground">Fuel inventory</h2>
           <div className="mt-2">
             <DataTable
               rows={station.inventory.map((i) => ({ ...i }))}

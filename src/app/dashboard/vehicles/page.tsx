@@ -15,18 +15,18 @@ export default async function VehiclesPage({
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-slate-900">Vehicles & Fleets</h1>
+      <h1 className="font-heading text-xl font-bold text-foreground">Vehicles & Fleets</h1>
 
-      <div className="mt-4 flex gap-2 border-b border-slate-200">
+      <div className="mt-4 flex gap-2 border-b border-border">
         <Link
           href="/dashboard/vehicles?tab=vehicles"
-          className={`px-3 py-2 text-sm ${tab === 'vehicles' ? 'border-b-2 border-slate-900 font-medium text-slate-900' : 'text-slate-500'}`}
+          className={`px-3 py-2 text-sm ${tab === 'vehicles' ? 'border-b-2 border-primary font-semibold text-primary' : 'text-muted'}`}
         >
           Vehicles
         </Link>
         <Link
           href="/dashboard/vehicles?tab=fleets"
-          className={`px-3 py-2 text-sm ${tab === 'fleets' ? 'border-b-2 border-slate-900 font-medium text-slate-900' : 'text-slate-500'}`}
+          className={`px-3 py-2 text-sm ${tab === 'fleets' ? 'border-b-2 border-primary font-semibold text-primary' : 'text-muted'}`}
         >
           Fleet groups
         </Link>

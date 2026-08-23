@@ -16,7 +16,7 @@ export default async function OverviewPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-slate-900">Overview</h1>
+      <h1 className="font-heading text-xl font-bold text-foreground">Overview</h1>
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         <StatCard label="Commuters" value={overview.totalUsers} />
         <StatCard label="Vendors" value={overview.totalVendors} />

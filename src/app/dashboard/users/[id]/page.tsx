@@ -9,32 +9,32 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-xl font-semibold text-slate-900">{user.fullName}</h1>
-      <p className="text-sm text-slate-500">{user.email}</p>
+      <h1 className="font-heading text-xl font-bold text-foreground">{user.fullName}</h1>
+      <p className="text-sm text-muted">{user.email}</p>
 
-      <div className="mt-6 grid grid-cols-2 gap-4 rounded-lg border border-slate-200 bg-white p-4 text-sm">
+      <div className="mt-6 grid grid-cols-2 gap-4 rounded-2xl border border-border bg-card p-4 text-sm">
         <div>
-          <p className="text-slate-500">Role</p>
+          <p className="text-muted">Role</p>
           <p className="mt-1"><Badge tone="blue">{user.role}</Badge></p>
         </div>
         <div>
-          <p className="text-slate-500">KYC status</p>
+          <p className="text-muted">KYC status</p>
           <p className="mt-1"><Badge tone={statusTone(user.kycStatus)}>{user.kycStatus}</Badge></p>
         </div>
         <div>
-          <p className="text-slate-500">Phone</p>
+          <p className="text-muted">Phone</p>
           <p className="mt-1">{user.phone || '—'}</p>
         </div>
         <div>
-          <p className="text-slate-500">Location</p>
+          <p className="text-muted">Location</p>
           <p className="mt-1">{[user.city, user.state].filter(Boolean).join(', ') || '—'}</p>
         </div>
         <div>
-          <p className="text-slate-500">Joined</p>
+          <p className="text-muted">Joined</p>
           <p className="mt-1">{new Date(user.createdAt).toLocaleDateString()}</p>
         </div>
         <div>
-          <p className="text-slate-500">Account status</p>
+          <p className="text-muted">Account status</p>
           <p className="mt-1">
             {user.suspendedAt ? (
               <Badge tone="red">Suspended{user.suspensionReason ? `: ${user.suspensionReason}` : ''}</Badge>

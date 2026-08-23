@@ -28,14 +28,14 @@ export function LegalDocumentForm({ initial, onDone }: { initial?: LegalDocument
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border border-slate-200 bg-white p-4">
+    <form onSubmit={handleSubmit} className="space-y-3 rounded-2xl border border-border bg-card p-4">
       {!initial && (
         <div className="flex gap-2">
-          <select value={type} onChange={(e) => setType(e.target.value as typeof type)} className="rounded-md border border-slate-300 px-3 py-1.5 text-sm">
+          <select value={type} onChange={(e) => setType(e.target.value as typeof type)} className="rounded-full border border-border bg-background px-3 py-1.5 text-sm focus:border-primary focus:outline-none">
             <option value="terms_of_service">Terms of service</option>
             <option value="privacy_policy">Privacy policy</option>
           </select>
-          <select value={target} onChange={(e) => setTarget(e.target.value as typeof target)} className="rounded-md border border-slate-300 px-3 py-1.5 text-sm">
+          <select value={target} onChange={(e) => setTarget(e.target.value as typeof target)} className="rounded-full border border-border bg-background px-3 py-1.5 text-sm focus:border-primary focus:outline-none">
             <option value="both">Both</option>
             <option value="users">Users</option>
             <option value="vendors">Vendors</option>
@@ -48,7 +48,7 @@ export function LegalDocumentForm({ initial, onDone }: { initial?: LegalDocument
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Title"
-        className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+        className="w-full rounded-full border border-border bg-background px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
       />
       <input
         type="text"
@@ -56,7 +56,7 @@ export function LegalDocumentForm({ initial, onDone }: { initial?: LegalDocument
         value={version}
         onChange={(e) => setVersion(e.target.value)}
         placeholder="Version (e.g. 1.0)"
-        className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+        className="w-full rounded-full border border-border bg-background px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
       />
       <textarea
         required
@@ -64,9 +64,9 @@ export function LegalDocumentForm({ initial, onDone }: { initial?: LegalDocument
         onChange={(e) => setContent(e.target.value)}
         placeholder="Content"
         rows={6}
-        className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm"
+        className="w-full rounded-2xl border border-border bg-background px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
       />
-      <button type="submit" disabled={isPending} className="rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white disabled:opacity-50">
+      <button type="submit" disabled={isPending} className="rounded-full bg-primary px-4 py-1.5 font-heading text-sm font-bold text-primary-foreground hover:bg-primary-hover disabled:opacity-50">
         {initial ? 'Save changes' : 'Publish document'}
       </button>
     </form>
