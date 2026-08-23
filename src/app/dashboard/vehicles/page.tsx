@@ -47,9 +47,32 @@ async function VehiclesTable({ page, params }: { page: number; params: Record<st
         rows={result.data}
         columns={[
           { header: 'Name', render: (v) => v.name || '—' },
-          { header: 'Make/Model', render: (v) => [v.make, v.model].filter(Boolean).join(' ') || '—' },
+          { header: 'Make/Model/Year', render: (v) => [v.make, v.model, v.year].filter(Boolean).join(' ') || '—' },
           { header: 'Plate', render: (v) => v.licensePlate },
-          { header: 'Owner', render: (v) => v.userId },
+          { header: 'Color', render: (v) => v.color || '—' },
+          { header: 'Driver', render: (v) => v.driverName || '—' },
+          {
+            header: 'Owner',
+            render: (v) =>
+              v.user ? (
+                <Link href={`/dashboard/users/${v.userId}`} className="text-primary hover:underline">
+                  {v.user.fullName}
+                </Link>
+              ) : (
+                '—'
+              ),
+          },
+          {
+            header: 'Fleet group',
+            render: (v) =>
+              v.fleetGroup ? (
+                <Link href={`/dashboard/vehicles/fleets/${v.fleetGroup.id}`} className="text-primary hover:underline">
+                  {v.fleetGroup.name}
+                </Link>
+              ) : (
+                <span className="text-muted">Personal vehicle</span>
+              ),
+          },
         ]}
       />
       <Pagination page={result.page} limit={result.limit} total={result.total} basePath="/dashboard/vehicles" searchParams={{ ...params, tab: 'vehicles' }} />
@@ -64,9 +87,29 @@ async function FleetsTable({ page, params }: { page: number; params: Record<stri
       <DataTable<AdminFleetGroup>
         rows={result.data}
         columns={[
-          { header: 'Name', render: (f) => f.name },
+          {
+            header: 'Name',
+            render: (f) => (
+              <Link href={`/dashboard/vehicles/fleets/${f.id}`} className="font-medium text-primary hover:underline">
+                {f.name}
+              </Link>
+            ),
+          },
           { header: 'Description', render: (f) => f.description || '—' },
-          { header: 'Owner', render: (f) => f.ownerId },
+          {
+            header: 'Owner',
+            render: (f) =>
+              f.owner ? (
+                <Link href={`/dashboard/users/${f.ownerId}`} className="text-primary hover:underline">
+                  {f.owner.fullName}
+                </Link>
+              ) : (
+                '—'
+              ),
+          },
+          { header: 'Vehicles', render: (f) => f.vehicleCount ?? 0 },
+          { header: 'Members', render: (f) => f.memberCount ?? 0 },
+          { header: 'Created', render: (f) => new Date(f.createdAt).toLocaleDateString() },
         ]}
       />
       <Pagination page={result.page} limit={result.limit} total={result.total} basePath="/dashboard/vehicles" searchParams={{ ...params, tab: 'fleets' }} />

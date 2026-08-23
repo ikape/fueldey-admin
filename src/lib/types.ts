@@ -16,6 +16,7 @@ export interface AdminUser {
   state?: string;
   suspendedAt?: string;
   suspensionReason?: string;
+  deletedAt?: string;
   createdAt: string;
 }
 
@@ -71,6 +72,13 @@ export interface AdminOrder {
   createdAt: string;
 }
 
+export interface FleetSummaryUser {
+  id: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+}
+
 export interface AdminVehicle {
   id: string;
   userId: string;
@@ -78,8 +86,16 @@ export interface AdminVehicle {
   make?: string;
   model?: string;
   licensePlate: string;
+  fuelType?: string;
+  tankCapacity?: string;
+  spendingLimit?: string;
+  year?: number;
+  color?: string;
+  driverName?: string;
   fleetGroupId?: string;
   createdAt: string;
+  user?: FleetSummaryUser;
+  fleetGroup?: { id: string; name: string };
 }
 
 export interface AdminFleetGroup {
@@ -88,6 +104,21 @@ export interface AdminFleetGroup {
   name: string;
   description?: string;
   createdAt: string;
+  owner?: FleetSummaryUser;
+  vehicleCount?: number;
+  memberCount?: number;
+}
+
+export interface AdminFleetMember {
+  id: string;
+  role: string;
+  createdAt: string;
+  user?: FleetSummaryUser;
+}
+
+export interface AdminFleetGroupDetail extends AdminFleetGroup {
+  members: AdminFleetMember[];
+  vehicles: AdminVehicle[];
 }
 
 export interface AdminReview {

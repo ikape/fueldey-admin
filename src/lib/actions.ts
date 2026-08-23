@@ -17,6 +17,13 @@ export async function reactivateUserAction(userId: string) {
   revalidatePath(`/dashboard/users/${userId}`);
 }
 
+export async function deleteUserAction(userId: string, reason: string) {
+  await api.patch(`/users/admin/${userId}/delete`, { reason: reason || undefined });
+  revalidatePath('/dashboard/commuters');
+  revalidatePath('/dashboard/vendors');
+  revalidatePath(`/dashboard/users/${userId}`);
+}
+
 export async function approveUserKycAction(userId: string) {
   await api.patch(`/users/admin/${userId}/kyc/approve`);
   revalidatePath('/dashboard/kyc');

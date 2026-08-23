@@ -38,7 +38,9 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
         <div>
           <p className="text-muted">Account status</p>
           <p className="mt-1">
-            {user.suspendedAt ? (
+            {user.deletedAt ? (
+              <Badge tone="red">Deleted</Badge>
+            ) : user.suspendedAt ? (
               <Badge tone="red">Suspended{user.suspensionReason ? `: ${user.suspensionReason}` : ''}</Badge>
             ) : (
               <Badge tone="green">Active</Badge>
@@ -48,7 +50,11 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
       </div>
 
       <div className="mt-6 flex items-center gap-4">
-        <UserSuspensionControls userId={user.id} isSuspended={Boolean(user.suspendedAt)} />
+        <UserSuspensionControls
+          userId={user.id}
+          isSuspended={Boolean(user.suspendedAt)}
+          isDeleted={Boolean(user.deletedAt)}
+        />
         {user.role === 'vendor' && (
           <Link href={`/dashboard/stations?vendorId=${user.id}`} className="text-sm font-medium text-primary hover:underline">
             View stations →

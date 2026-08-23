@@ -4,6 +4,7 @@ import { Paginated, AdminUser } from '@/lib/types';
 import { DataTable } from '@/components/DataTable';
 import { Pagination } from '@/components/Pagination';
 import { Badge, statusTone } from '@/components/Badge';
+import { UserSuspensionControls } from '@/components/UserSuspensionControls';
 
 export default async function CommutersPage({
   searchParams,
@@ -55,7 +56,28 @@ export default async function CommutersPage({
             },
             { header: 'Email', render: (u) => u.email },
             { header: 'KYC', render: (u) => <Badge tone={statusTone(u.kycStatus)}>{u.kycStatus}</Badge> },
-            { header: 'Status', render: (u) => (u.suspendedAt ? <Badge tone="red">Suspended</Badge> : <Badge tone="green">Active</Badge>) },
+            {
+              header: 'Status',
+              render: (u) =>
+                u.deletedAt ? (
+                  <Badge tone="red">Deleted</Badge>
+                ) : u.suspendedAt ? (
+                  <Badge tone="red">Suspended</Badge>
+                ) : (
+                  <Badge tone="green">Active</Badge>
+                ),
+            },
+            {
+              header: 'Actions',
+              render: (u) => (
+                <UserSuspensionControls
+                  userId={u.id}
+                  isSuspended={Boolean(u.suspendedAt)}
+                  isDeleted={Boolean(u.deletedAt)}
+                  compact
+                />
+              ),
+            },
           ]}
         />
         <Pagination page={result.page} limit={result.limit} total={result.total} basePath="/dashboard/commuters" searchParams={params} />
