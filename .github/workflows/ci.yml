@@ -22,16 +22,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Typecheck
-        run: npm run typecheck
-
       - name: Lint
         run: npm run lint
 
       - name: Test
         run: npm test
 
-      - name: Build
+      # `next build` runs a full TypeScript check itself and also generates
+      # the route-typed globals (e.g. LayoutProps<...>) that a standalone
+      # `tsc --noEmit` can't see without a prior build — so build first and
+      # skip a separate, order-dependent typecheck step.
+      - name: Build (includes typecheck)
         run: npm run build
         env:
           API_BASE_URL: https://que-api.iprolance.com
