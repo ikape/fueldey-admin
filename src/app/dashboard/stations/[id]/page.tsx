@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { api } from '@/lib/api';
 import { AdminStation } from '@/lib/types';
 import { Badge } from '@/components/Badge';
@@ -20,7 +21,12 @@ export default async function StationDetailPage({ params }: { params: Promise<{ 
 
       <div className="mt-4 rounded-2xl border border-border bg-card p-4 text-sm">
         <p><span className="text-muted">Phone:</span> {station.phone || '—'}</p>
-        <p className="mt-1"><span className="text-muted">Vendor ID:</span> {station.vendorId}</p>
+        <p className="mt-1">
+          <span className="text-muted">Vendor:</span>{' '}
+          <Link href={`/dashboard/users/${station.vendorId}`} className="text-primary hover:underline">
+            View vendor account
+          </Link>
+        </p>
       </div>
 
       {station.inventory && station.inventory.length > 0 && (

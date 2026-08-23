@@ -30,7 +30,7 @@ export function StationControls({ stationId, isActive, isOpen }: { stationId: st
           if (!confirm('Delete this station? This cannot be undone.')) return;
           startTransition(async () => {
             await deleteStationAction(stationId);
-            router.push('/dashboard/vendors');
+            router.push('/dashboard/stations');
           });
         }}
         className="rounded-full border border-danger/40 px-4 py-1.5 text-sm font-medium text-danger hover:bg-danger-bg disabled:opacity-50"

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { api } from '@/lib/api';
 import { AdminUser } from '@/lib/types';
 import { Badge, statusTone } from '@/components/Badge';
@@ -45,8 +46,13 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
         </div>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 flex items-center gap-4">
         <UserSuspensionControls userId={user.id} isSuspended={Boolean(user.suspendedAt)} />
+        {user.role === 'vendor' && (
+          <Link href={`/dashboard/stations?vendorId=${user.id}`} className="text-sm font-medium text-primary hover:underline">
+            View stations →
+          </Link>
+        )}
       </div>
     </div>
   );

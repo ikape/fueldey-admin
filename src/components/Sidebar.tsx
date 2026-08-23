@@ -2,8 +2,9 @@ import Link from 'next/link';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Overview' },
-  { href: '/dashboard/users', label: 'Users' },
-  { href: '/dashboard/vendors', label: 'Vendors & Stations' },
+  { href: '/dashboard/commuters', label: 'Commuters' },
+  { href: '/dashboard/vendors', label: 'Vendors' },
+  { href: '/dashboard/stations', label: 'Stations' },
   { href: '/dashboard/kyc', label: 'KYC Review' },
   { href: '/dashboard/wallet', label: 'Wallet' },
   { href: '/dashboard/orders', label: 'Orders' },

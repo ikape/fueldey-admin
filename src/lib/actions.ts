@@ -5,13 +5,15 @@ import { api } from './api';
 
 export async function suspendUserAction(userId: string, reason: string) {
   await api.patch(`/users/admin/${userId}/suspend`, { reason: reason || undefined });
-  revalidatePath('/dashboard/users');
+  revalidatePath('/dashboard/commuters');
+  revalidatePath('/dashboard/vendors');
   revalidatePath(`/dashboard/users/${userId}`);
 }
 
 export async function reactivateUserAction(userId: string) {
   await api.patch(`/users/admin/${userId}/reactivate`);
-  revalidatePath('/dashboard/users');
+  revalidatePath('/dashboard/commuters');
+  revalidatePath('/dashboard/vendors');
   revalidatePath(`/dashboard/users/${userId}`);
 }
 
@@ -27,13 +29,13 @@ export async function rejectDocumentAction(documentId: string, reason: string) {
 
 export async function updateStationStatusAction(stationId: string, data: { isOpen?: boolean; isActive?: boolean }) {
   await api.put(`/stations/admin/${stationId}/status`, data);
-  revalidatePath('/dashboard/vendors');
-  revalidatePath(`/dashboard/vendors/${stationId}`);
+  revalidatePath('/dashboard/stations');
+  revalidatePath(`/dashboard/stations/${stationId}`);
 }
 
 export async function deleteStationAction(stationId: string) {
   await api.delete(`/stations/admin/${stationId}`);
-  revalidatePath('/dashboard/vendors');
+  revalidatePath('/dashboard/stations');
 }
 
 export async function approveWithdrawalAction(transactionId: string) {
