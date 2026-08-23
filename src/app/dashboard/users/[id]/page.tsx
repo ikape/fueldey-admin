@@ -3,6 +3,7 @@ import { api } from '@/lib/api';
 import { AdminUser } from '@/lib/types';
 import { Badge, statusTone } from '@/components/Badge';
 import { UserSuspensionControls } from '@/components/UserSuspensionControls';
+import { KycStatusControls } from '@/components/KycStatusControls';
 
 export default async function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -53,6 +54,11 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
             View stations →
           </Link>
         )}
+      </div>
+
+      <div className="mt-4">
+        <p className="mb-1 text-xs text-muted">Manually override KYC status:</p>
+        <KycStatusControls userId={user.id} />
       </div>
     </div>
   );

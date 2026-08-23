@@ -3,6 +3,8 @@ import { api } from '@/lib/api';
 import { Paginated, AdminUser, AdminDocument } from '@/lib/types';
 import { DataTable } from '@/components/DataTable';
 import { DocumentReviewControls } from '@/components/DocumentReviewControls';
+import { KycStatusControls } from '@/components/KycStatusControls';
+import { Badge } from '@/components/Badge';
 
 export default async function KycReviewPage() {
   const [pendingUsers, pendingDocuments] = await Promise.all([
@@ -16,6 +18,7 @@ export default async function KycReviewPage() {
 
       <section className="mt-6">
         <h2 className="font-heading text-sm font-semibold text-foreground">Users awaiting KYCAID verification ({pendingUsers.total})</h2>
+        <p className="mt-1 text-xs text-muted">Approve/reject here sets the account&apos;s real KYC status directly — works for commuters and vendors alike.</p>
         <div className="mt-2">
           <DataTable<AdminUser>
             rows={pendingUsers.data}
@@ -30,7 +33,9 @@ export default async function KycReviewPage() {
                 ),
               },
               { header: 'Email', render: (u) => u.email },
+              { header: 'Role', render: (u) => <Badge tone="blue">{u.role}</Badge> },
               { header: 'Submitted', render: (u) => new Date(u.createdAt).toLocaleDateString() },
+              { header: 'Actions', render: (u) => <KycStatusControls userId={u.id} /> },
             ]}
           />
         </div>
@@ -38,6 +43,7 @@ export default async function KycReviewPage() {
 
       <section className="mt-8">
         <h2 className="font-heading text-sm font-semibold text-foreground">Documents pending manual review ({pendingDocuments.total})</h2>
+        <p className="mt-1 text-xs text-muted">Separate document-collection system (proof of address, business license, etc.) — approving here does not change the account&apos;s KYC status above.</p>
         <div className="mt-2">
           <DataTable<AdminDocument>
             rows={pendingDocuments.data}

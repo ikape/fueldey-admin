@@ -17,6 +17,22 @@ export async function reactivateUserAction(userId: string) {
   revalidatePath(`/dashboard/users/${userId}`);
 }
 
+export async function approveUserKycAction(userId: string) {
+  await api.patch(`/users/admin/${userId}/kyc/approve`);
+  revalidatePath('/dashboard/kyc');
+  revalidatePath('/dashboard/commuters');
+  revalidatePath('/dashboard/vendors');
+  revalidatePath(`/dashboard/users/${userId}`);
+}
+
+export async function rejectUserKycAction(userId: string, reason: string) {
+  await api.patch(`/users/admin/${userId}/kyc/reject`, { reason: reason || undefined });
+  revalidatePath('/dashboard/kyc');
+  revalidatePath('/dashboard/commuters');
+  revalidatePath('/dashboard/vendors');
+  revalidatePath(`/dashboard/users/${userId}`);
+}
+
 export async function approveDocumentAction(documentId: string) {
   await api.post(`/documents/${documentId}/approve`);
   revalidatePath('/dashboard/kyc');
