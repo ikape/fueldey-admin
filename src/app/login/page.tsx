@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
@@ -34,9 +35,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm rounded-3xl border border-border bg-card p-8 shadow-sm">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-          <span className="font-heading text-xl font-extrabold text-primary">F</span>
-        </div>
+        <Image src="/logo.png" alt="FuelDey" width={48} height={48} className="mx-auto rounded-xl" />
         <h1 className="mt-4 text-center font-heading text-2xl font-extrabold text-foreground">FuelDey Admin</h1>
         <p className="mt-1 text-center text-sm text-muted">Sign in to your admin account</p>
 

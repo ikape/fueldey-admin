@@ -1,7 +1,15 @@
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { Sidebar } from '@/components/Sidebar';
 import { LogoutButton } from '@/components/LogoutButton';
+import { SESSION_COOKIE, isValidAdminSession } from '@/lib/auth';
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  if (!isValidAdminSession(token)) {
+    redirect('/login');
+  }
+
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar />

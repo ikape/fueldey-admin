@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 const NAV_ITEMS = [
@@ -16,7 +17,10 @@ const NAV_ITEMS = [
 export function Sidebar() {
   return (
     <nav className="w-56 shrink-0 border-r border-border bg-card p-4">
-      <p className="px-2 font-heading text-lg font-extrabold text-primary">FuelDey Admin</p>
+      <div className="flex items-center gap-2 px-2">
+        <Image src="/logo.png" alt="FuelDey" width={28} height={28} className="rounded-lg" />
+        <p className="font-heading text-lg font-extrabold text-primary">FuelDey Admin</p>
+      </div>
       <ul className="mt-6 space-y-1">
         {NAV_ITEMS.map((item) => (
           <li key={item.href}>

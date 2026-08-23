@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { SESSION_COOKIE } from './auth';
 
 export const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000';
@@ -22,6 +23,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     },
     cache: 'no-store',
   });
+
+  if (res.status === 401) {
+    // Session cookie is missing/expired/rejected by the backend — bounce to
+    // login instead of letting a raw ApiError surface as a crash page.
+    redirect('/login');
+  }
 
   const text = await res.text();
   const data = text ? JSON.parse(text) : undefined;
