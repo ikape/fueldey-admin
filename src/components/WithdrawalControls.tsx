@@ -5,13 +5,16 @@ import { approveWithdrawalAction, rejectWithdrawalAction } from '@/lib/actions';
 
 export function WithdrawalControls({ transactionId }: { transactionId: string }) {
   const [reason, setReason] = useState('');
-  const [isPending, startTransition] = useTransition();
+  // Separate transitions so clicking Approve doesn't visually disable
+  // Reject (and vice versa) — they're independent actions.
+  const [isApprovePending, startApproveTransition] = useTransition();
+  const [isRejectPending, startRejectTransition] = useTransition();
 
   return (
     <div className="flex items-center gap-2">
       <button
-        disabled={isPending}
-        onClick={() => startTransition(() => approveWithdrawalAction(transactionId))}
+        disabled={isApprovePending}
+        onClick={() => startApproveTransition(() => approveWithdrawalAction(transactionId))}
         className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
       >
         Approve
@@ -24,8 +27,8 @@ export function WithdrawalControls({ transactionId }: { transactionId: string })
         className="rounded-full border border-border bg-card px-2 py-1 text-xs focus:border-primary focus:outline-none"
       />
       <button
-        disabled={isPending}
-        onClick={() => startTransition(() => rejectWithdrawalAction(transactionId, reason))}
+        disabled={isRejectPending}
+        onClick={() => startRejectTransition(() => rejectWithdrawalAction(transactionId, reason))}
         className="rounded-full bg-danger px-3 py-1 text-xs font-semibold text-white hover:opacity-90 disabled:opacity-50"
       >
         Reject
