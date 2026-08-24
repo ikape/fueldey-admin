@@ -5,6 +5,8 @@ import { DataTable } from '@/components/DataTable';
 import { Pagination } from '@/components/Pagination';
 import { Badge, statusTone } from '@/components/Badge';
 import { UserSuspensionControls } from '@/components/UserSuspensionControls';
+import { RefreshButton } from '@/components/RefreshButton';
+import { Button } from '@/components/Button';
 
 export default async function CommutersPage({
   searchParams,
@@ -20,7 +22,10 @@ export default async function CommutersPage({
 
   return (
     <div>
-      <h1 className="font-heading text-xl font-bold text-foreground">Commuters</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-xl font-bold text-foreground">Commuters</h1>
+        <RefreshButton />
+      </div>
 
       <form className="mt-4 flex flex-wrap gap-2" method="GET">
         <input
@@ -37,9 +42,9 @@ export default async function CommutersPage({
           <option value="approved">Approved</option>
           <option value="rejected">Rejected</option>
         </select>
-        <button type="submit" className="rounded-full bg-primary px-4 py-1.5 font-heading text-sm font-bold text-primary-foreground hover:bg-primary-hover">
+        <Button type="submit" variant="primary" className="font-heading">
           Filter
-        </button>
+        </Button>
       </form>
 
       <div className="mt-4">

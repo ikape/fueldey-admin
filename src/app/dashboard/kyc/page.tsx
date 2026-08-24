@@ -4,6 +4,7 @@ import { Paginated, AdminUser, AdminDocument } from '@/lib/types';
 import { DataTable } from '@/components/DataTable';
 import { DocumentReviewControls } from '@/components/DocumentReviewControls';
 import { Badge } from '@/components/Badge';
+import { RefreshButton } from '@/components/RefreshButton';
 
 export default async function KycReviewPage() {
   const [pendingUsers, pendingDocuments] = await Promise.all([
@@ -13,10 +14,16 @@ export default async function KycReviewPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-xl font-bold text-foreground">KYC review</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-xl font-bold text-foreground">KYC review</h1>
+        <RefreshButton />
+      </div>
 
       <section className="mt-6">
-        <h2 className="font-heading text-sm font-semibold text-foreground">Users awaiting KYCAID verification ({pendingUsers.total})</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-heading text-sm font-semibold text-foreground">Users awaiting KYCAID verification ({pendingUsers.total})</h2>
+          <RefreshButton />
+        </div>
         <p className="mt-1 text-xs text-muted">Open a user to review their submitted ID/selfie documents before approving or rejecting — works for commuters and vendors alike.</p>
         <div className="mt-2">
           <DataTable<AdminUser>
@@ -39,7 +46,7 @@ export default async function KycReviewPage() {
                 render: (u) => (
                   <Link
                     href={`/dashboard/kyc/${u.id}`}
-                    className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary-hover"
+                    className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors duration-150 hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
                     Review documents →
                   </Link>
@@ -51,7 +58,10 @@ export default async function KycReviewPage() {
       </section>
 
       <section className="mt-8">
-        <h2 className="font-heading text-sm font-semibold text-foreground">Documents pending manual review ({pendingDocuments.total})</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-heading text-sm font-semibold text-foreground">Documents pending manual review ({pendingDocuments.total})</h2>
+          <RefreshButton />
+        </div>
         <p className="mt-1 text-xs text-muted">Separate document-collection system (proof of address, business license, etc.) — approving here does not change the account&apos;s KYC status above.</p>
         <div className="mt-2">
           <DataTable<AdminDocument>

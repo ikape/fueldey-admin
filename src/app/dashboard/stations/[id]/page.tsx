@@ -4,6 +4,7 @@ import { AdminStation } from '@/lib/types';
 import { Badge } from '@/components/Badge';
 import { StationControls } from '@/components/StationControls';
 import { DataTable } from '@/components/DataTable';
+import { RefreshButton } from '@/components/RefreshButton';
 
 export default async function StationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -11,7 +12,10 @@ export default async function StationDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="max-w-2xl">
-      <h1 className="font-heading text-xl font-bold text-foreground">{station.name}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-xl font-bold text-foreground">{station.name}</h1>
+        <RefreshButton />
+      </div>
       <p className="text-sm text-muted">{station.address}</p>
 
       <div className="mt-6 flex gap-2">

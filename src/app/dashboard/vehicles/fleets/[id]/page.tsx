@@ -3,6 +3,7 @@ import { api } from '@/lib/api';
 import { AdminFleetGroupDetail } from '@/lib/types';
 import { DataTable } from '@/components/DataTable';
 import { Badge } from '@/components/Badge';
+import { RefreshButton } from '@/components/RefreshButton';
 
 export default async function FleetGroupDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -10,9 +11,12 @@ export default async function FleetGroupDetailPage({ params }: { params: Promise
 
   return (
     <div className="max-w-3xl">
-      <Link href="/dashboard/vehicles?tab=fleets" className="text-sm text-primary hover:underline">
-        &larr; Back to fleet groups
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link href="/dashboard/vehicles?tab=fleets" className="text-sm text-primary hover:underline">
+          &larr; Back to fleet groups
+        </Link>
+        <RefreshButton />
+      </div>
 
       <h1 className="mt-2 font-heading text-xl font-bold text-foreground">{group.name}</h1>
       <p className="text-sm text-muted">{group.description || 'No description provided.'}</p>

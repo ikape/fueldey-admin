@@ -32,8 +32,8 @@
   --color-danger-bg: var(--danger-bg);
   --color-success-bg: var(--success-bg);
   --color-warning-bg: var(--warning-bg);
-  --font-sans: var(--font-nunito);
-  --font-heading: var(--font-plus-jakarta);
+  --font-sans: var(--font-manrope);
+  --font-heading: var(--font-manrope);
 }
 
 @media (prefers-color-scheme: dark) {

@@ -4,6 +4,7 @@ import { AdminUser } from '@/lib/types';
 import { Badge, statusTone } from '@/components/Badge';
 import { UserSuspensionControls } from '@/components/UserSuspensionControls';
 import { KycStatusControls } from '@/components/KycStatusControls';
+import { RefreshButton } from '@/components/RefreshButton';
 
 export default async function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -11,7 +12,10 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="max-w-2xl">
-      <h1 className="font-heading text-xl font-bold text-foreground">{user.fullName}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-xl font-bold text-foreground">{user.fullName}</h1>
+        <RefreshButton />
+      </div>
       <p className="text-sm text-muted">{user.email}</p>
 
       <div className="mt-6 grid grid-cols-2 gap-4 rounded-2xl border border-border bg-card p-4 text-sm">

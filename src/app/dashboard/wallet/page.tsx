@@ -5,6 +5,7 @@ import { DataTable } from '@/components/DataTable';
 import { Pagination } from '@/components/Pagination';
 import { Badge, statusTone } from '@/components/Badge';
 import { WithdrawalControls } from '@/components/WithdrawalControls';
+import { RefreshButton } from '@/components/RefreshButton';
 
 export default async function WalletPage({
   searchParams,
@@ -17,7 +18,10 @@ export default async function WalletPage({
 
   return (
     <div>
-      <h1 className="font-heading text-xl font-bold text-foreground">Wallet</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-xl font-bold text-foreground">Wallet</h1>
+        <RefreshButton />
+      </div>
 
       <div className="mt-4 flex gap-2 border-b border-border">
         <Link

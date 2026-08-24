@@ -3,6 +3,7 @@ import { Paginated, AdminReview } from '@/lib/types';
 import { DataTable } from '@/components/DataTable';
 import { Pagination } from '@/components/Pagination';
 import { DeleteReviewButton } from '@/components/DeleteReviewButton';
+import { RefreshButton } from '@/components/RefreshButton';
 
 export default async function ReviewsPage({
   searchParams,
@@ -16,7 +17,10 @@ export default async function ReviewsPage({
 
   return (
     <div>
-      <h1 className="font-heading text-xl font-bold text-foreground">Reviews</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-xl font-bold text-foreground">Reviews</h1>
+        <RefreshButton />
+      </div>
 
       <div className="mt-4">
         <DataTable<AdminReview>

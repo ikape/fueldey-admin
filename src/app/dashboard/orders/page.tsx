@@ -4,6 +4,8 @@ import { DataTable } from '@/components/DataTable';
 import { Pagination } from '@/components/Pagination';
 import { StatCard } from '@/components/StatCard';
 import { Badge, statusTone } from '@/components/Badge';
+import { RefreshButton } from '@/components/RefreshButton';
+import { Button } from '@/components/Button';
 
 interface OrderStats {
   total: number;
@@ -27,7 +29,10 @@ export default async function OrdersPage({
 
   return (
     <div>
-      <h1 className="font-heading text-xl font-bold text-foreground">Orders</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-xl font-bold text-foreground">Orders</h1>
+        <RefreshButton />
+      </div>
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <StatCard label="Total orders" value={stats.total} />
@@ -44,9 +49,9 @@ export default async function OrdersPage({
           <option value="completed">Completed</option>
           <option value="cancelled">Cancelled</option>
         </select>
-        <button type="submit" className="rounded-full bg-primary px-4 py-1.5 font-heading text-sm font-bold text-primary-foreground hover:bg-primary-hover">
+        <Button type="submit" variant="primary" className="font-heading">
           Filter
-        </button>
+        </Button>
       </form>
 
       <div className="mt-4">

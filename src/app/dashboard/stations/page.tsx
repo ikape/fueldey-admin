@@ -4,6 +4,8 @@ import { Paginated, AdminStation } from '@/lib/types';
 import { DataTable } from '@/components/DataTable';
 import { Pagination } from '@/components/Pagination';
 import { Badge } from '@/components/Badge';
+import { RefreshButton } from '@/components/RefreshButton';
+import { Button } from '@/components/Button';
 
 export default async function StationsPage({
   searchParams,
@@ -19,7 +21,10 @@ export default async function StationsPage({
 
   return (
     <div>
-      <h1 className="font-heading text-xl font-bold text-foreground">Stations</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-xl font-bold text-foreground">Stations</h1>
+        <RefreshButton />
+      </div>
 
       {params.vendorId && (
         <p className="mt-2 text-sm text-muted">
@@ -44,9 +49,9 @@ export default async function StationsPage({
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
-        <button type="submit" className="rounded-full bg-primary px-4 py-1.5 font-heading text-sm font-bold text-primary-foreground hover:bg-primary-hover">
+        <Button type="submit" variant="primary" className="font-heading">
           Filter
-        </button>
+        </Button>
       </form>
 
       <div className="mt-4">

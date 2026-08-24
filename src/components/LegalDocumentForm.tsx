@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { createLegalDocumentAction, updateLegalDocumentAction } from '@/lib/actions';
 import { LegalDocument } from '@/lib/types';
+import { Button } from '@/components/Button';
 
 export function LegalDocumentForm({ initial, onDone }: { initial?: LegalDocument; onDone?: () => void }) {
   const [type, setType] = useState(initial?.type || 'terms_of_service');
@@ -66,9 +67,9 @@ export function LegalDocumentForm({ initial, onDone }: { initial?: LegalDocument
         rows={6}
         className="w-full rounded-2xl border border-border bg-background px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
       />
-      <button type="submit" disabled={isPending} className="rounded-full bg-primary px-4 py-1.5 font-heading text-sm font-bold text-primary-foreground hover:bg-primary-hover disabled:opacity-50">
+      <Button type="submit" variant="primary" disabled={isPending} className="font-heading">
         {initial ? 'Save changes' : 'Publish document'}
-      </button>
+      </Button>
     </form>
   );
 }

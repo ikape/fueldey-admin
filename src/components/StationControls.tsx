@@ -3,6 +3,7 @@
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateStationStatusAction, deleteStationAction } from '@/lib/actions';
+import { Button } from '@/components/Button';
 
 export function StationControls({ stationId, isActive, isOpen }: { stationId: string; isActive: boolean; isOpen: boolean }) {
   // Separate transitions per button — sharing one flag across all three
@@ -15,21 +16,22 @@ export function StationControls({ stationId, isActive, isOpen }: { stationId: st
 
   return (
     <div className="flex flex-wrap gap-2">
-      <button
+      <Button
+        variant="outline"
         disabled={isActivePending}
         onClick={() => startActiveTransition(() => updateStationStatusAction(stationId, { isActive: !isActive }))}
-        className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium hover:border-primary hover:text-primary disabled:opacity-50"
       >
         {isActive ? 'Deactivate station' : 'Activate station'}
-      </button>
-      <button
+      </Button>
+      <Button
+        variant="outline"
         disabled={isOpenPending}
         onClick={() => startOpenTransition(() => updateStationStatusAction(stationId, { isOpen: !isOpen }))}
-        className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium hover:border-primary hover:text-primary disabled:opacity-50"
       >
         {isOpen ? 'Mark closed' : 'Mark open'}
-      </button>
-      <button
+      </Button>
+      <Button
+        variant="dangerOutline"
         disabled={isDeletePending}
         onClick={() => {
           if (!confirm('Delete this station? This cannot be undone.')) return;
@@ -38,10 +40,9 @@ export function StationControls({ stationId, isActive, isOpen }: { stationId: st
             router.push('/dashboard/stations');
           });
         }}
-        className="rounded-full border border-danger/40 px-4 py-1.5 text-sm font-medium text-danger hover:bg-danger-bg disabled:opacity-50"
       >
         Delete station
-      </button>
+      </Button>
     </div>
   );
 }

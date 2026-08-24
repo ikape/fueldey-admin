@@ -3,6 +3,7 @@ import { api, buildQuery } from '@/lib/api';
 import { Paginated, AdminVehicle, AdminFleetGroup } from '@/lib/types';
 import { DataTable } from '@/components/DataTable';
 import { Pagination } from '@/components/Pagination';
+import { RefreshButton } from '@/components/RefreshButton';
 
 export default async function VehiclesPage({
   searchParams,
@@ -15,7 +16,10 @@ export default async function VehiclesPage({
 
   return (
     <div>
-      <h1 className="font-heading text-xl font-bold text-foreground">Vehicles & Fleets</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-xl font-bold text-foreground">Vehicles & Fleets</h1>
+        <RefreshButton />
+      </div>
 
       <div className="mt-4 flex gap-2 border-b border-border">
         <Link

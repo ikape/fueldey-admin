@@ -1,5 +1,6 @@
 import { api } from '@/lib/api';
 import { StatCard } from '@/components/StatCard';
+import { RefreshButton } from '@/components/RefreshButton';
 
 interface Overview {
   totalUsers: number;
@@ -16,7 +17,10 @@ export default async function OverviewPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-xl font-bold text-foreground">Overview</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-xl font-bold text-foreground">Overview</h1>
+        <RefreshButton />
+      </div>
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         <StatCard label="Commuters" value={overview.totalUsers} />
         <StatCard label="Vendors" value={overview.totalVendors} />

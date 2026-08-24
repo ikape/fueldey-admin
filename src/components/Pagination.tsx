@@ -32,14 +32,14 @@ export function Pagination({
         <a
           aria-disabled={page <= 1}
           href={page > 1 ? hrefFor(page - 1) : undefined}
-          className={`rounded-full border border-border px-3 py-1 font-medium ${page <= 1 ? 'pointer-events-none opacity-40' : 'hover:border-primary hover:text-primary'}`}
+          className={`rounded-full border border-border px-3 py-1 font-medium transition-colors duration-150 ${page <= 1 ? 'pointer-events-none opacity-40' : 'hover:border-primary hover:text-primary'}`}
         >
           Previous
         </a>
         <a
           aria-disabled={page >= totalPages}
           href={page < totalPages ? hrefFor(page + 1) : undefined}
-          className={`rounded-full border border-border px-3 py-1 font-medium ${page >= totalPages ? 'pointer-events-none opacity-40' : 'hover:border-primary hover:text-primary'}`}
+          className={`rounded-full border border-border px-3 py-1 font-medium transition-colors duration-150 ${page >= totalPages ? 'pointer-events-none opacity-40' : 'hover:border-primary hover:text-primary'}`}
         >
           Next
         </a>

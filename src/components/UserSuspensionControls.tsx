@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { suspendUserAction, reactivateUserAction, deleteUserAction } from '@/lib/actions';
+import { Button } from '@/components/Button';
 
 export function UserSuspensionControls({
   userId,
@@ -21,16 +22,16 @@ export function UserSuspensionControls({
   const [isStatusPending, startStatusTransition] = useTransition();
   const [isDeletePending, startDeleteTransition] = useTransition();
 
-  const buttonClass = compact
-    ? 'rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50'
-    : 'rounded-full px-4 py-1.5 text-sm font-semibold disabled:opacity-50';
+  const size = compact ? 'sm' : 'md';
 
   if (isDeleted) {
     return <span className="text-xs text-muted">Account deleted</span>;
   }
 
   const deleteButton = (
-    <button
+    <Button
+      variant="dangerOutline"
+      size={size}
       disabled={isDeletePending}
       onClick={() => {
         const deleteReason = window.prompt('Reason for deleting this account? (optional)');
@@ -38,22 +39,22 @@ export function UserSuspensionControls({
         if (!confirm('This will permanently deactivate the account. Continue?')) return;
         startDeleteTransition(() => deleteUserAction(userId, deleteReason));
       }}
-      className={`${buttonClass} border border-danger/40 text-danger hover:bg-danger-bg`}
     >
       Delete
-    </button>
+    </Button>
   );
 
   if (isSuspended) {
     return (
       <div className="flex items-center gap-2">
-        <button
+        <Button
+          variant="primary"
+          size={size}
           disabled={isStatusPending}
           onClick={() => startStatusTransition(() => reactivateUserAction(userId))}
-          className={`${buttonClass} bg-primary text-primary-foreground hover:bg-primary-hover`}
         >
           Reactivate
-        </button>
+        </Button>
         {deleteButton}
       </div>
     );
@@ -62,17 +63,18 @@ export function UserSuspensionControls({
   if (compact) {
     return (
       <div className="flex items-center gap-2">
-        <button
+        <Button
+          variant="danger"
+          size={size}
           disabled={isStatusPending}
           onClick={() => {
             const suspendReason = window.prompt('Reason for suspending this account? (optional)');
             if (suspendReason === null) return;
             startStatusTransition(() => suspendUserAction(userId, suspendReason));
           }}
-          className={`${buttonClass} bg-danger text-white hover:opacity-90`}
         >
           Suspend
-        </button>
+        </Button>
         {deleteButton}
       </div>
     );
@@ -85,15 +87,16 @@ export function UserSuspensionControls({
         value={reason}
         onChange={(e) => setReason(e.target.value)}
         placeholder="Reason (optional)"
-        className="rounded-full border border-border bg-card px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
+        className="rounded-full border border-border bg-card px-3 py-1.5 text-sm transition-colors duration-150 focus:border-primary focus:outline-none"
       />
-      <button
+      <Button
+        variant="danger"
+        size={size}
         disabled={isStatusPending}
         onClick={() => startStatusTransition(() => suspendUserAction(userId, reason))}
-        className={`${buttonClass} bg-danger text-white hover:opacity-90`}
       >
         Suspend
-      </button>
+      </Button>
       {deleteButton}
     </div>
   );

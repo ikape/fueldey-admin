@@ -3,6 +3,7 @@ import { api, ApiError } from '@/lib/api';
 import { AdminUser, KycaidDocument } from '@/lib/types';
 import { Badge } from '@/components/Badge';
 import { KycStatusControls } from '@/components/KycStatusControls';
+import { RefreshButton } from '@/components/RefreshButton';
 
 const DOCUMENT_TYPE_LABELS: Record<string, string> = {
   GOVERNMENT_ID: 'Government-issued ID (e.g. NIN slip, voter’s card)',
@@ -54,9 +55,12 @@ export default async function KycDocumentReviewPage({ params }: { params: Promis
 
   return (
     <div className="max-w-3xl">
-      <Link href="/dashboard/kyc" className="text-sm text-primary hover:underline">
-        &larr; Back to KYC review
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link href="/dashboard/kyc" className="text-sm text-primary hover:underline">
+          &larr; Back to KYC review
+        </Link>
+        <RefreshButton />
+      </div>
 
       <h1 className="mt-2 font-heading text-xl font-bold text-foreground">{user.fullName}</h1>
       <p className="text-sm text-muted">{user.email}</p>
