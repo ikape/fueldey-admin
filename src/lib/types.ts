@@ -39,6 +39,30 @@ export interface AdminStation {
   inventory?: FuelInventoryItem[];
 }
 
+/** KYCAID's Document object (front/back/selfie etc. submitted during KYC) —
+ * fields per https://docs.kycaid.com/objects/documents/document-get. The
+ * image fields are direct URLs on KYCAID's side; the admin UI never uses them
+ * directly, always through our own /api/kyc/documents/:id/image proxy. */
+export interface KycaidDocument {
+  document_id: string;
+  applicant_id: string;
+  type: string;
+  status?: 'new' | 'valid' | 'invalid' | null;
+  comment?: string | null;
+  document_number?: string | null;
+  issue_date?: string | null;
+  expiry_date?: string | null;
+  issuing_authority?: string | null;
+  portrait?: string | null;
+  front_side?: string | null;
+  back_side?: string | null;
+  other_side_1?: string | null;
+  other_side_2?: string | null;
+  other_side_3?: string | null;
+  created_at?: string;
+  decline_reasons?: string[] | null;
+}
+
 export interface AdminDocument {
   id: string;
   userId: string;
@@ -56,7 +80,7 @@ export interface AdminTransaction {
   userId: string;
   type: 'top_up' | 'purchase' | 'refund' | 'withdrawal';
   amount: string;
-  status: 'pending' | 'completed' | 'failed';
+  status: 'pending' | 'processing' | 'completed' | 'failed';
   reference: string;
   description?: string;
   createdAt: string;

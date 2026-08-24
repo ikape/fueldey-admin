@@ -53,6 +53,15 @@ async function PendingWithdrawals() {
       emptyMessage="No pending withdrawals."
       columns={[
         { header: 'Reference', render: (t) => t.reference },
+        {
+          header: 'Vendor',
+          render: (t) => (
+            <Link href={`/dashboard/users/${t.userId}`} className="text-primary hover:underline">
+              View vendor
+            </Link>
+          ),
+        },
+        { header: 'Bank details', render: (t) => t.description || '—' },
         { header: 'Amount', render: (t) => `₦${Number(t.amount).toLocaleString()}` },
         { header: 'Requested', render: (t) => new Date(t.createdAt).toLocaleString() },
         { header: 'Actions', render: (t) => <WithdrawalControls transactionId={t.id} /> },
