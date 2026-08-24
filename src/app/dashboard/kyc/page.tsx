@@ -3,7 +3,6 @@ import { api } from '@/lib/api';
 import { Paginated, AdminUser, AdminDocument } from '@/lib/types';
 import { DataTable } from '@/components/DataTable';
 import { DocumentReviewControls } from '@/components/DocumentReviewControls';
-import { KycStatusControls } from '@/components/KycStatusControls';
 import { Badge } from '@/components/Badge';
 
 export default async function KycReviewPage() {
@@ -18,7 +17,7 @@ export default async function KycReviewPage() {
 
       <section className="mt-6">
         <h2 className="font-heading text-sm font-semibold text-foreground">Users awaiting KYCAID verification ({pendingUsers.total})</h2>
-        <p className="mt-1 text-xs text-muted">Approve/reject here sets the account&apos;s real KYC status directly — works for commuters and vendors alike.</p>
+        <p className="mt-1 text-xs text-muted">Open a user to review their submitted ID/selfie documents before approving or rejecting — works for commuters and vendors alike.</p>
         <div className="mt-2">
           <DataTable<AdminUser>
             rows={pendingUsers.data}
@@ -35,7 +34,17 @@ export default async function KycReviewPage() {
               { header: 'Email', render: (u) => u.email },
               { header: 'Role', render: (u) => <Badge tone="blue">{u.role}</Badge> },
               { header: 'Submitted', render: (u) => new Date(u.createdAt).toLocaleDateString() },
-              { header: 'Actions', render: (u) => <KycStatusControls userId={u.id} /> },
+              {
+                header: 'Actions',
+                render: (u) => (
+                  <Link
+                    href={`/dashboard/kyc/${u.id}`}
+                    className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary-hover"
+                  >
+                    Review documents →
+                  </Link>
+                ),
+              },
             ]}
           />
         </div>
