@@ -35,8 +35,8 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm rounded-3xl border border-border bg-card p-8 shadow-sm">
-        <Image src="/logo.png" alt="FuelDey" width={48} height={48} className="mx-auto rounded-xl" />
-        <h1 className="mt-4 text-center font-heading text-2xl font-extrabold text-foreground">FuelDey Admin</h1>
+        <Image src="/logo.png" alt="Que" width={48} height={48} className="mx-auto rounded-xl" />
+        <h1 className="mt-4 text-center font-heading text-2xl font-extrabold text-foreground">Que Admin</h1>
         <p className="mt-1 text-center text-sm text-muted">Sign in to your admin account</p>
 
         {error && (

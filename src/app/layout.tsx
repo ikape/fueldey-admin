@@ -8,8 +8,8 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "FuelDey Admin",
-  description: "Admin dashboard for FuelDey",
+  title: "Que Admin",
+  description: "Admin dashboard for Que",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

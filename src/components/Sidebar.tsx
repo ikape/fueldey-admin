@@ -18,8 +18,8 @@ export function Sidebar() {
   return (
     <nav className="w-56 shrink-0 border-r border-border bg-card p-4">
       <div className="flex items-center gap-2 px-2">
-        <Image src="/logo.png" alt="FuelDey" width={28} height={28} className="rounded-lg" />
-        <p className="font-heading text-lg font-extrabold text-primary">FuelDey Admin</p>
+        <Image src="/logo.png" alt="Que" width={28} height={28} className="rounded-lg" />
+        <p className="font-heading text-lg font-extrabold text-primary">Que Admin</p>
       </div>
       <ul className="mt-6 space-y-1">
         {NAV_ITEMS.map((item) => (
