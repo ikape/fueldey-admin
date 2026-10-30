@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const justReset = useSearchParams().get('reset') === '1';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -39,6 +41,12 @@ export default function LoginPage() {
         <h1 className="mt-4 text-center font-heading text-2xl font-extrabold text-foreground">Que Admin</h1>
         <p className="mt-1 text-center text-sm text-muted">Sign in to your admin account</p>
 
+        {justReset && !error && (
+          <div className="mt-4 rounded-xl bg-primary/10 px-3 py-2 text-sm text-primary">
+            Password updated. Sign in with your new password.
+          </div>
+        )}
+
         {error && (
           <div className="mt-4 rounded-xl bg-danger-bg px-3 py-2 text-sm text-danger">{error}</div>
         )}
@@ -64,6 +72,11 @@ export default function LoginPage() {
               className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
             />
           </div>
+          <p className="text-right text-sm">
+            <Link href="/forgot-password" className="text-primary hover:underline">
+              Forgot password?
+            </Link>
+          </p>
           <button
             type="submit"
             disabled={isLoading}
@@ -74,5 +87,13 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }
