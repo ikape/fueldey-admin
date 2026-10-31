@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import { NavLinks } from './NavLinks';
 import { getPendingKycCount } from '@/lib/pendingKyc';
 
 const NAV_ITEMS = [
@@ -24,26 +24,7 @@ export async function Sidebar() {
         <Image src="/logo.png" alt="Que" width={28} height={28} className="rounded-lg" />
         <p className="font-heading text-lg font-extrabold text-primary">Que Admin</p>
       </div>
-      <ul className="mt-6 space-y-1">
-        {NAV_ITEMS.map((item) => (
-          <li key={item.href}>
-            <Link
-              href={item.href}
-              className="flex items-center justify-between rounded-full px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-primary/10 hover:text-primary"
-            >
-              {item.label}
-              {item.href === '/dashboard/kyc' && pendingKyc ? (
-                <span
-                  aria-label={`${pendingKyc} pending KYC requests`}
-                  className="rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-accent-foreground"
-                >
-                  {pendingKyc}
-                </span>
-              ) : null}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <NavLinks items={NAV_ITEMS} pendingKyc={pendingKyc} />
     </nav>
   );
 }
