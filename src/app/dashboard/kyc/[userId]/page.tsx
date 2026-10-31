@@ -1,57 +1,37 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { api, ApiError } from '@/lib/api';
-import { AdminUser, KycaidDocument } from '@/lib/types';
-import { Badge } from '@/components/Badge';
+import { AdminUser } from '@/lib/types';
+import { companyTypeLabel, matchingDirectors } from '@/lib/kyc';
+import { Badge, statusTone } from '@/components/Badge';
 import { KycStatusControls } from '@/components/KycStatusControls';
 import { RefreshButton } from '@/components/RefreshButton';
 
-const DOCUMENT_TYPE_LABELS: Record<string, string> = {
-  GOVERNMENT_ID: 'Government-issued ID (e.g. NIN slip, voter’s card)',
-  PASSPORT: 'International passport',
-  DOMESTIC_PASSPORT: 'Domestic passport',
-  FOREIGN_CITIZEN_PASSPORT: 'Foreign citizen passport',
-  DRIVERS_LICENSE: "Driver's license",
-  PERMANENT_RESIDENCE_PERMIT: 'Permanent residence permit',
-  REFUGEE_CARD: 'Refugee card',
-  BANK_STATEMENT: 'Bank statement',
-  FINANCIAL_DOCUMENT: 'Financial document',
-  CREDIT_CARD: 'Credit card',
-  SELFIE_IMAGE: 'Selfie / liveness photo',
-  SELFIE_WITH_CREDIT_CARD: 'Selfie with credit card',
-};
+const formatDate = (value?: string) => (value ? new Date(value).toLocaleDateString() : '—');
 
-const IMAGE_FIELDS = ['portrait', 'front_side', 'back_side', 'other_side_1', 'other_side_2', 'other_side_3'] as const;
-const IMAGE_FIELD_LABELS: Record<(typeof IMAGE_FIELDS)[number], string> = {
-  portrait: 'Extracted portrait',
-  front_side: 'Front side',
-  back_side: 'Back side',
-  other_side_1: 'Additional page 1',
-  other_side_2: 'Additional page 2',
-  other_side_3: 'Additional page 3',
-};
-
-function documentStatusTone(status?: string | null): 'green' | 'red' | 'yellow' | 'gray' {
-  if (status === 'valid') return 'green';
-  if (status === 'invalid') return 'red';
-  if (status === 'new') return 'yellow';
-  return 'gray';
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <p className="text-muted">{label}</p>
+      <p className="mt-1 text-foreground">{children || '—'}</p>
+    </div>
+  );
 }
 
-export default async function KycDocumentReviewPage({ params }: { params: Promise<{ userId: string }> }) {
+export default async function KycReviewDetailPage({ params }: { params: Promise<{ userId: string }> }) {
   const { userId } = await params;
 
-  const user = await api.get<AdminUser>(`/users/admin/${userId}`);
-
-  let documents: KycaidDocument[] = [];
-  let documentsError: string | null = null;
+  let user: AdminUser;
   try {
-    documents = await api.get<KycaidDocument[]>(`/kycaid/admin/${userId}/documents`);
+    user = await api.get<AdminUser>(`/users/admin/${userId}`);
   } catch (error) {
-    documentsError =
-      error instanceof ApiError && error.status === 404
-        ? 'This user has no KYCAID verification on record yet.'
-        : 'Could not load KYC documents from the provider right now.';
+    if (error instanceof ApiError && error.status === 404) notFound();
+    throw error;
   }
+
+  const isVendor = user.role === 'vendor';
+  const business = user.kycBusiness;
+  const matches = business ? matchingDirectors(user.fullName, business.directors) : [];
 
   return (
     <div className="max-w-3xl">
@@ -62,77 +42,93 @@ export default async function KycDocumentReviewPage({ params }: { params: Promis
         <RefreshButton />
       </div>
 
-      <h1 className="mt-2 font-heading text-xl font-bold text-foreground">{user.fullName}</h1>
+      <div className="mt-2 flex flex-wrap items-center gap-3">
+        <h1 className="font-heading text-xl font-bold text-foreground">{user.fullName}</h1>
+        <Badge tone={statusTone(user.kycStatus)}>{user.kycStatus.replace('_', ' ')}</Badge>
+      </div>
       <p className="text-sm text-muted">{user.email}</p>
-      <p className="mt-1 text-xs text-muted">
-        Review the documents below before approving or rejecting &mdash; approving without checking them defeats the point of KYC.
-      </p>
 
-      <div className="mt-6 space-y-6">
-        {documentsError && (
-          <div className="rounded-2xl border border-border bg-card p-4 text-sm text-muted">{documentsError}</div>
-        )}
+      <div className="mt-6 grid grid-cols-2 gap-4 rounded-2xl border border-border bg-card p-4 text-sm sm:grid-cols-3">
+        <Field label="Account type">
+          <Badge tone="blue">{user.role}</Badge>
+        </Field>
+        <Field label="Phone">{user.phone}</Field>
+        <Field label="Location">{[user.city, user.state].filter(Boolean).join(', ')}</Field>
+        <Field label="Joined">{formatDate(user.createdAt)}</Field>
+        <Field label="Account">
+          {user.deletedAt ? <Badge tone="red">Deleted</Badge> : user.suspendedAt ? <Badge tone="red">Suspended</Badge> : <Badge tone="green">Active</Badge>}
+        </Field>
+        <Field label="Prembly reference">{user.kycReference && <span className="break-all font-mono text-xs">{user.kycReference}</span>}</Field>
+      </div>
 
-        {!documentsError && documents.length === 0 && (
-          <div className="rounded-2xl border border-border bg-card p-4 text-sm text-muted">
-            No documents were returned for this verification.
-          </div>
-        )}
-
-        {documents.map((doc) => (
-          <div key={doc.document_id} className="rounded-2xl border border-border bg-card p-4">
+      {isVendor ? (
+        business ? (
+          <section className="mt-6 rounded-2xl border border-border bg-card p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="font-heading text-sm font-semibold text-foreground">
-                {DOCUMENT_TYPE_LABELS[doc.type] || doc.type}
-              </h2>
-              <Badge tone={documentStatusTone(doc.status)}>{doc.status || 'unknown'}</Badge>
+              <h2 className="font-heading text-sm font-semibold text-foreground">Business registration (CAC)</h2>
+              <Badge tone={business.companyStatus === 'ACTIVE' ? 'green' : 'yellow'}>{business.companyStatus || 'unknown'}</Badge>
             </div>
 
-            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted">
-              {doc.document_number && (
-                <>
-                  <dt>Document number</dt>
-                  <dd className="text-foreground">{doc.document_number}</dd>
-                </>
-              )}
-              {doc.issuing_authority && (
-                <>
-                  <dt>Issuing authority</dt>
-                  <dd className="text-foreground">{doc.issuing_authority}</dd>
-                </>
-              )}
-              {doc.expiry_date && (
-                <>
-                  <dt>Expiry date</dt>
-                  <dd className="text-foreground">{doc.expiry_date}</dd>
-                </>
-              )}
-            </dl>
+            <div className="mt-3 grid grid-cols-2 gap-4 text-sm">
+              <Field label="Registered name">{business.companyName}</Field>
+              <Field label="Registration number">
+                {business.rcNumber} <span className="text-muted">· {companyTypeLabel(business.companyType)}</span>
+              </Field>
+              <Field label="Registered on">{formatDate(business.registrationDate)}</Field>
+              <Field label="Checked with CAC">{formatDate(business.checkedAt)}</Field>
+              <div className="col-span-2">
+                <Field label="Registered address">{business.address}</Field>
+              </div>
+            </div>
 
-            {doc.decline_reasons && doc.decline_reasons.length > 0 && (
-              <p className="mt-2 text-xs text-danger">Decline reasons: {doc.decline_reasons.join(', ')}</p>
+            <h3 className="mt-5 text-xs font-semibold uppercase tracking-wide text-muted">Directors on record</h3>
+            {business.directors.length === 0 ? (
+              <p className="mt-2 text-sm text-muted">CAC returned no directors for this business.</p>
+            ) : (
+              <ul className="mt-2 space-y-1 text-sm">
+                {business.directors.map((director) => (
+                  <li key={director} className="flex items-center gap-2 text-foreground">
+                    {director}
+                    {matches.includes(director) && <Badge tone="green">matches account owner</Badge>}
+                  </li>
+                ))}
+              </ul>
             )}
 
-            <div className="mt-4 flex flex-wrap gap-4">
-              {IMAGE_FIELDS.filter((field) => doc[field]).map((field) => (
-                <figure key={field} className="w-56">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- proxied, non-static provider image */}
-                  <img
-                    src={`/api/kyc/documents/${doc.document_id}/image?field=${field}`}
-                    alt={`${DOCUMENT_TYPE_LABELS[doc.type] || doc.type} — ${IMAGE_FIELD_LABELS[field]}`}
-                    className="w-full rounded-xl border border-border object-cover"
-                  />
-                  <figcaption className="mt-1 text-center text-xs text-muted">{IMAGE_FIELD_LABELS[field]}</figcaption>
-                </figure>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+            <p
+              role="note"
+              className={`mt-4 rounded-xl px-3 py-2 text-xs ${matches.length > 0 ? 'bg-success-bg text-primary' : 'bg-warning-bg text-accent-foreground'}`}
+            >
+              {matches.length > 0
+                ? `The account owner, ${user.fullName}, matches a director of this business.`
+                : business.directors.length === 0
+                  ? `CAC lists no directors, so ${user.fullName} can't be matched to this business. Confirm they own it before approving.`
+                  : `None of the directors match the account owner, ${user.fullName}. RC numbers are public, so confirm they really own this business before approving.`}
+            </p>
+          </section>
+        ) : (
+          <section className="mt-6 rounded-2xl border border-border bg-card p-4 text-sm text-muted">
+            This vendor has not submitted a CAC registration number yet, so there is no business record to review.
+          </section>
+        )
+      ) : (
+        <section className="mt-6 rounded-2xl border border-border bg-card p-4 text-sm text-muted">
+          Commuters verify with a BVN or NIN, checked by Prembly against the account name. A match is approved automatically,
+          so a decision here is only needed to override that result.
+        </section>
+      )}
+
+      {isVendor && (
+        <p className="mt-3 text-sm">
+          <Link href={`/dashboard/stations?vendorId=${user.id}`} className="font-medium text-primary hover:underline">
+            View this vendor&apos;s stations →
+          </Link>
+        </p>
+      )}
 
       <div className="mt-8 border-t border-border pt-4">
         <p className="mb-2 text-xs text-muted">Decision:</p>
-        <KycStatusControls userId={user.id} />
+        <KycStatusControls userId={user.id} status={user.kycStatus} subject={isVendor ? 'business' : 'identity'} />
       </div>
     </div>
   );

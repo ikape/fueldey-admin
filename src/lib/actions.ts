@@ -1,7 +1,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { api } from './api';
+import { api, ApiError } from './api';
+import { isValidRejectionReason, MIN_REJECTION_REASON_LENGTH, type KycDecisionResult } from './kyc';
 
 export async function suspendUserAction(userId: string, reason: string) {
   await api.patch(`/users/admin/${userId}/suspend`, { reason: reason || undefined });
@@ -24,20 +25,30 @@ export async function deleteUserAction(userId: string, reason: string) {
   revalidatePath(`/dashboard/users/${userId}`);
 }
 
-export async function approveUserKycAction(userId: string) {
-  await api.patch(`/users/admin/${userId}/kyc/approve`);
-  revalidatePath('/dashboard/kyc');
-  revalidatePath('/dashboard/commuters');
-  revalidatePath('/dashboard/vendors');
-  revalidatePath(`/dashboard/users/${userId}`);
+async function decideUserKyc(userId: string, decision: 'approve' | 'reject', body?: { reason: string }): Promise<KycDecisionResult> {
+  try {
+    await api.patch(`/users/admin/${userId}/kyc/${decision}`, body);
+  } catch (error) {
+    // Only the backend's own refusals are expected; anything else (including the login redirect
+    // api.ts throws on an expired session) must keep propagating.
+    if (error instanceof ApiError) return { ok: false, error: error.message };
+    throw error;
+  }
+  // The decision shows up in the queue, both user lists, the user page, the overview's pending
+  // count and the sidebar badge — all under the dashboard layout.
+  revalidatePath('/dashboard', 'layout');
+  return { ok: true };
 }
 
-export async function rejectUserKycAction(userId: string, reason: string) {
-  await api.patch(`/users/admin/${userId}/kyc/reject`, { reason: reason || undefined });
-  revalidatePath('/dashboard/kyc');
-  revalidatePath('/dashboard/commuters');
-  revalidatePath('/dashboard/vendors');
-  revalidatePath(`/dashboard/users/${userId}`);
+export async function approveUserKycAction(userId: string): Promise<KycDecisionResult> {
+  return decideUserKyc(userId, 'approve');
+}
+
+export async function rejectUserKycAction(userId: string, reason: string): Promise<KycDecisionResult> {
+  if (!isValidRejectionReason(reason)) {
+    return { ok: false, error: `Give the user a reason (at least ${MIN_REJECTION_REASON_LENGTH} characters) so they know what to fix.` };
+  }
+  return decideUserKyc(userId, 'reject', { reason: reason.trim() });
 }
 
 export async function approveDocumentAction(documentId: string) {

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { getPendingKycCount } from '@/lib/pendingKyc';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Overview' },
@@ -14,7 +15,9 @@ const NAV_ITEMS = [
   { href: '/dashboard/legal', label: 'Legal' },
 ];
 
-export function Sidebar() {
+export async function Sidebar() {
+  const pendingKyc = await getPendingKycCount();
+
   return (
     <nav className="w-56 shrink-0 border-r border-border bg-card p-4">
       <div className="flex items-center gap-2 px-2">
@@ -26,9 +29,17 @@ export function Sidebar() {
           <li key={item.href}>
             <Link
               href={item.href}
-              className="block rounded-full px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-primary/10 hover:text-primary"
+              className="flex items-center justify-between rounded-full px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-primary/10 hover:text-primary"
             >
               {item.label}
+              {item.href === '/dashboard/kyc' && pendingKyc ? (
+                <span
+                  aria-label={`${pendingKyc} pending KYC requests`}
+                  className="rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-accent-foreground"
+                >
+                  {pendingKyc}
+                </span>
+              ) : null}
             </Link>
           </li>
         ))}

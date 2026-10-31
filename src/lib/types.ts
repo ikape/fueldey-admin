@@ -5,19 +5,42 @@ export interface Paginated<T> {
   limit: number;
 }
 
+export type KycStatus = 'not_submitted' | 'pending' | 'approved' | 'rejected';
+
+/** The CAC record the backend found (via Prembly) when a vendor submitted their registration
+ * number. Kept on the user so an admin can review it before approving. */
+export interface KycBusiness {
+  rcNumber: string;
+  /** RC = registered company, BN = business name, IT = incorporated trustees. */
+  companyType: string;
+  companyName?: string;
+  /** CAC's own status, upper-cased (the backend only stores ACTIVE businesses for review). */
+  companyStatus?: string;
+  registrationDate?: string;
+  address?: string;
+  directors: string[];
+  reference?: string;
+  checkedAt: string;
+}
+
 export interface AdminUser {
   id: string;
   email: string;
   fullName: string;
   phone?: string;
   role: 'commuter' | 'vendor' | 'admin';
-  kycStatus: 'not_submitted' | 'pending' | 'approved' | 'rejected';
+  kycStatus: KycStatus;
+  /** Prembly's reference for the latest KYC check. */
+  kycReference?: string;
+  /** Vendors only: set once they have submitted a CAC registration number. */
+  kycBusiness?: KycBusiness | null;
   city?: string;
   state?: string;
   suspendedAt?: string;
   suspensionReason?: string;
   deletedAt?: string;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface FuelInventoryItem {
@@ -37,30 +60,6 @@ export interface AdminStation {
   isOpen: boolean;
   createdAt: string;
   inventory?: FuelInventoryItem[];
-}
-
-/** KYCAID's Document object (front/back/selfie etc. submitted during KYC) —
- * fields per https://docs.kycaid.com/objects/documents/document-get. The
- * image fields are direct URLs on KYCAID's side; the admin UI never uses them
- * directly, always through our own /api/kyc/documents/:id/image proxy. */
-export interface KycaidDocument {
-  document_id: string;
-  applicant_id: string;
-  type: string;
-  status?: 'new' | 'valid' | 'invalid' | null;
-  comment?: string | null;
-  document_number?: string | null;
-  issue_date?: string | null;
-  expiry_date?: string | null;
-  issuing_authority?: string | null;
-  portrait?: string | null;
-  front_side?: string | null;
-  back_side?: string | null;
-  other_side_1?: string | null;
-  other_side_2?: string | null;
-  other_side_3?: string | null;
-  created_at?: string;
-  decline_reasons?: string[] | null;
 }
 
 export interface AdminDocument {

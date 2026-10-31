@@ -67,8 +67,17 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
       </div>
 
       <div className="mt-4">
-        <p className="mb-1 text-xs text-muted">Manually override KYC status:</p>
-        <KycStatusControls userId={user.id} />
+        <div className="mb-1 flex items-center gap-3">
+          <p className="text-xs text-muted">KYC decision:</p>
+          <Link href={`/dashboard/kyc/${user.id}`} className="text-xs font-medium text-primary hover:underline">
+            Open full KYC review →
+          </Link>
+        </div>
+        <KycStatusControls
+          userId={user.id}
+          status={user.kycStatus}
+          subject={user.role === 'vendor' ? 'business' : 'identity'}
+        />
       </div>
     </div>
   );

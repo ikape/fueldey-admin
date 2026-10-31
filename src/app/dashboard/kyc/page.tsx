@@ -1,16 +1,53 @@
 import Link from 'next/link';
-import { api } from '@/lib/api';
+import { api, buildQuery } from '@/lib/api';
 import { Paginated, AdminUser, AdminDocument } from '@/lib/types';
 import { DataTable } from '@/components/DataTable';
 import { DocumentReviewControls } from '@/components/DocumentReviewControls';
-import { Badge } from '@/components/Badge';
+import { Badge, statusTone } from '@/components/Badge';
+import { Button } from '@/components/Button';
+import { Pagination } from '@/components/Pagination';
 import { RefreshButton } from '@/components/RefreshButton';
 
-export default async function KycReviewPage() {
-  const [pendingUsers, pendingDocuments] = await Promise.all([
-    api.get<Paginated<AdminUser>>('/users/admin?kycStatus=pending&limit=50'),
+const PAGE_SIZE = 20;
+
+const STATUS_OPTIONS = [
+  { value: 'pending', label: 'Pending review' },
+  { value: 'approved', label: 'Approved' },
+  { value: 'rejected', label: 'Declined' },
+  { value: 'not_submitted', label: 'Not submitted' },
+  { value: 'all', label: 'Any status' },
+];
+
+const ROLE_OPTIONS = [
+  { value: '', label: 'All account types' },
+  { value: 'vendor', label: 'Vendors' },
+  { value: 'commuter', label: 'Commuters' },
+];
+
+export default async function KycReviewPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; status?: string; role?: string; search?: string }>;
+}) {
+  const params = await searchParams;
+  const page = Number(params.page) || 1;
+  // The queue opens on what needs a decision.
+  const status = params.status || 'pending';
+
+  const [users, pendingDocuments] = await Promise.all([
+    api.get<Paginated<AdminUser>>(
+      `/users/admin${buildQuery({
+        page,
+        limit: PAGE_SIZE,
+        kycStatus: status === 'all' ? undefined : status,
+        role: params.role,
+        search: params.search,
+      })}`,
+    ),
     api.get<Paginated<AdminDocument>>('/documents/admin/pending?limit=50'),
   ]);
+
+  const heading = STATUS_OPTIONS.find((o) => o.value === status)?.label ?? 'Requests';
 
   return (
     <div>
@@ -19,28 +56,72 @@ export default async function KycReviewPage() {
         <RefreshButton />
       </div>
 
+      <form className="mt-4 flex flex-wrap gap-2" method="GET">
+        <input
+          type="text"
+          name="search"
+          defaultValue={params.search}
+          placeholder="Search name, email, phone"
+          className="rounded-full border border-border bg-card px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
+        />
+        <select name="status" defaultValue={status} aria-label="KYC status" className="rounded-full border border-border bg-card px-3 py-1.5 text-sm focus:border-primary focus:outline-none">
+          {STATUS_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+        <select name="role" defaultValue={params.role || ''} aria-label="Account type" className="rounded-full border border-border bg-card px-3 py-1.5 text-sm focus:border-primary focus:outline-none">
+          {ROLE_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+        <Button type="submit" variant="primary" className="font-heading">
+          Filter
+        </Button>
+      </form>
+
       <section className="mt-6">
-        <div className="flex items-center justify-between">
-          <h2 className="font-heading text-sm font-semibold text-foreground">Users awaiting KYCAID verification ({pendingUsers.total})</h2>
-          <RefreshButton />
-        </div>
-        <p className="mt-1 text-xs text-muted">Open a user to review their submitted ID/selfie documents before approving or rejecting — works for commuters and vendors alike.</p>
+        <h2 className="font-heading text-sm font-semibold text-foreground">
+          {heading} ({users.total})
+        </h2>
+        <p className="mt-1 text-xs text-muted">
+          Vendors submit their CAC registration number and wait here for your decision. Commuters are approved automatically
+          when their BVN/NIN matches their account name; open one to override that.
+        </p>
         <div className="mt-2">
           <DataTable<AdminUser>
-            rows={pendingUsers.data}
-            emptyMessage="No users currently pending verification."
+            rows={users.data}
+            emptyMessage={status === 'pending' ? 'Nothing waiting for review.' : 'No users match these filters.'}
             columns={[
               {
                 header: 'Name',
                 render: (u) => (
-                  <Link href={`/dashboard/users/${u.id}`} className="font-medium text-primary hover:underline">
+                  <Link href={`/dashboard/kyc/${u.id}`} className="font-medium text-primary hover:underline">
                     {u.fullName}
                   </Link>
                 ),
               },
               { header: 'Email', render: (u) => u.email },
               { header: 'Role', render: (u) => <Badge tone="blue">{u.role}</Badge> },
-              { header: 'Submitted', render: (u) => new Date(u.createdAt).toLocaleDateString() },
+              {
+                header: 'Business (CAC)',
+                render: (u) =>
+                  u.kycBusiness ? (
+                    <span>
+                      {u.kycBusiness.companyName || '—'} <span className="text-muted">· {u.kycBusiness.companyType} {u.kycBusiness.rcNumber}</span>
+                    </span>
+                  ) : (
+                    <span className="text-muted">—</span>
+                  ),
+              },
+              { header: 'KYC', render: (u) => <Badge tone={statusTone(u.kycStatus)}>{u.kycStatus.replace('_', ' ')}</Badge> },
+              {
+                header: 'Submitted',
+                render: (u) => new Date(u.kycBusiness?.checkedAt ?? u.updatedAt ?? u.createdAt).toLocaleDateString(),
+              },
               {
                 header: 'Actions',
                 render: (u) => (
@@ -48,11 +129,18 @@ export default async function KycReviewPage() {
                     href={`/dashboard/kyc/${u.id}`}
                     className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground transition-colors duration-150 hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
-                    Review documents →
+                    {u.kycStatus === 'pending' ? 'Review →' : 'Open →'}
                   </Link>
                 ),
               },
             ]}
+          />
+          <Pagination
+            page={users.page}
+            limit={users.limit}
+            total={users.total}
+            basePath="/dashboard/kyc"
+            searchParams={{ status: params.status, role: params.role, search: params.search }}
           />
         </div>
       </section>
