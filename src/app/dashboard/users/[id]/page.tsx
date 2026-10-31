@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { api } from '@/lib/api';
-import { AdminUser } from '@/lib/types';
+import { AdminUser, UserWalletView } from '@/lib/types';
+import { formatNaira } from '@/lib/wallet';
 import { Badge, statusTone } from '@/components/Badge';
 import { UserSuspensionControls } from '@/components/UserSuspensionControls';
 import { KycStatusControls } from '@/components/KycStatusControls';
@@ -9,6 +10,8 @@ import { RefreshButton } from '@/components/RefreshButton';
 export default async function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const user = await api.get<AdminUser>(`/users/admin/${id}`);
+  // Context only: a failure to load the wallet must not hide the person.
+  const walletView = await api.get<UserWalletView>(`/wallet/admin/users/${id}`).catch(() => null);
 
   return (
     <div className="max-w-2xl">
@@ -65,6 +68,49 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
           </Link>
         )}
       </div>
+
+      {walletView && (
+        <section className="mt-6 rounded-2xl border border-border bg-card p-4 text-sm">
+          <div className="flex items-center justify-between">
+            <h2 className="font-heading text-sm font-semibold text-foreground">Wallet</h2>
+            <Link href={`/dashboard/wallet?tab=transactions&userId=${user.id}`} className="text-xs font-medium text-primary hover:underline">
+              All transactions →
+            </Link>
+          </div>
+
+          <div className="mt-3 grid grid-cols-3 gap-4">
+            <div>
+              <p className="text-muted">Balance</p>
+              <p className="mt-1 font-semibold text-foreground">{formatNaira(walletView.wallet?.balance)}</p>
+            </div>
+            <div>
+              <p className="text-muted">Locked in withdrawals</p>
+              <p className="mt-1">{formatNaira(walletView.wallet?.pendingBalance)}</p>
+            </div>
+            <div>
+              <p className="text-muted">Fuel tokens</p>
+              <p className="mt-1">
+                {walletView.tokens.active.count} active · {walletView.tokens.used.count} used
+              </p>
+            </div>
+          </div>
+
+          {walletView.recentTransactions.length === 0 ? (
+            <p className="mt-3 text-xs text-muted">No transactions yet.</p>
+          ) : (
+            <ul className="mt-3 divide-y divide-border">
+              {walletView.recentTransactions.slice(0, 5).map((t) => (
+                <li key={t.id} className="flex items-center gap-3 py-2">
+                  <Badge tone="blue">{t.type.replace('_', ' ')}</Badge>
+                  <span className="font-medium">{formatNaira(t.amount)}</span>
+                  <Badge tone={statusTone(t.status)}>{t.status}</Badge>
+                  <span className="ml-auto text-xs text-muted">{new Date(t.createdAt).toLocaleDateString()}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       <div className="mt-4">
         <div className="mb-1 flex items-center gap-3">

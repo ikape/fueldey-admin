@@ -1,6 +1,7 @@
-/** Outcome of an approve/decline. Expected failures (a rule the backend enforces, a bad reason)
- * come back as values so the UI can show them — thrown errors are masked in production builds. */
-export type KycDecisionResult = { ok: true } | { ok: false; error: string };
+import type { ActionResult } from './actionResult';
+
+/** Outcome of an approve/decline. */
+export type KycDecisionResult = ActionResult;
 
 /** Declining needs a real reason: it is shown to the user, who has to know what to fix. */
 export const MIN_REJECTION_REASON_LENGTH = 5;

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { api, ApiError } from './api';
+import type { ActionResult } from './actionResult';
 import { isValidRejectionReason, MIN_REJECTION_REASON_LENGTH, type KycDecisionResult } from './kyc';
 
 export async function suspendUserAction(userId: string, reason: string) {
@@ -72,14 +73,30 @@ export async function deleteStationAction(stationId: string) {
   revalidatePath('/dashboard/stations');
 }
 
-export async function approveWithdrawalAction(transactionId: string) {
-  await api.post(`/wallet/admin/withdrawals/${transactionId}/approve`);
-  revalidatePath('/dashboard/wallet');
+async function decideWithdrawal(transactionId: string, decision: 'approve' | 'reject', body?: { reason: string }): Promise<ActionResult> {
+  try {
+    await api.post(`/wallet/admin/withdrawals/${transactionId}/${decision}`, body);
+  } catch (error) {
+    // Only the backend's own refusals are expected (already processed, Paystack said no, ...); anything
+    // else, including the login redirect api.ts throws on an expired session, keeps propagating.
+    if (error instanceof ApiError) return { ok: false, error: error.message };
+    throw error;
+  }
+  // The queue, the overview figures, the vendor's wallet and the sidebar all change.
+  revalidatePath('/dashboard', 'layout');
+  return { ok: true };
 }
 
-export async function rejectWithdrawalAction(transactionId: string, reason: string) {
-  await api.post(`/wallet/admin/withdrawals/${transactionId}/reject`, { reason: reason || undefined });
-  revalidatePath('/dashboard/wallet');
+export async function approveWithdrawalAction(transactionId: string): Promise<ActionResult> {
+  return decideWithdrawal(transactionId, 'approve');
+}
+
+export async function rejectWithdrawalAction(transactionId: string, reason: string): Promise<ActionResult> {
+  // The vendor is told why; an empty "no" teaches them nothing.
+  if (!isValidRejectionReason(reason)) {
+    return { ok: false, error: `Give the vendor a reason (at least ${MIN_REJECTION_REASON_LENGTH} characters).` };
+  }
+  return decideWithdrawal(transactionId, 'reject', { reason: reason.trim() });
 }
 
 export async function deleteReviewAction(reviewId: string) {

@@ -7,6 +7,7 @@ import { Badge, statusTone } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { Pagination } from '@/components/Pagination';
 import { RefreshButton } from '@/components/RefreshButton';
+import { KycHistory } from '@/components/KycHistory';
 
 const PAGE_SIZE = 20;
 
@@ -27,10 +28,45 @@ const ROLE_OPTIONS = [
 export default async function KycReviewPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; status?: string; role?: string; search?: string }>;
+  searchParams: Promise<{ page?: string; status?: string; role?: string; search?: string; tab?: string; decision?: string }>;
 }) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
+  const tab = params.tab === 'history' ? 'history' : 'queue';
+  const header = (
+    <>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading text-xl font-bold text-foreground">KYC review</h1>
+        <RefreshButton />
+      </div>
+      <div className="mt-4 flex gap-2 border-b border-border">
+        <Link
+          href="/dashboard/kyc"
+          className={`px-3 py-2 text-sm ${tab === 'queue' ? 'border-b-2 border-primary font-semibold text-primary' : 'text-muted'}`}
+        >
+          Review queue
+        </Link>
+        <Link
+          href="/dashboard/kyc?tab=history"
+          className={`px-3 py-2 text-sm ${tab === 'history' ? 'border-b-2 border-primary font-semibold text-primary' : 'text-muted'}`}
+        >
+          Decision history
+        </Link>
+      </div>
+    </>
+  );
+
+  if (tab === 'history') {
+    return (
+      <div>
+        {header}
+        <div className="mt-4">
+          <KycHistory page={page} decision={params.decision} />
+        </div>
+      </div>
+    );
+  }
+
   // The queue opens on what needs a decision.
   const status = params.status || 'pending';
 
@@ -51,10 +87,7 @@ export default async function KycReviewPage({
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h1 className="font-heading text-xl font-bold text-foreground">KYC review</h1>
-        <RefreshButton />
-      </div>
+      {header}
 
       <form className="mt-4 flex flex-wrap gap-2" method="GET">
         <input

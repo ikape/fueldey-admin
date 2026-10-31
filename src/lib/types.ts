@@ -23,6 +23,21 @@ export interface KycBusiness {
   checkedAt: string;
 }
 
+/** One line of the KYC record: a submission, an automatic approval, or an admin's decision. */
+export interface KycHistoryEntry {
+  id: string;
+  at: string;
+  decision: 'approved' | 'rejected' | 'submitted';
+  /** True when no admin was involved (the BVN/NIN check approved it). */
+  automatic: boolean;
+  decidedBy: { id: string; fullName: string; email: string } | null;
+  user: { id: string; fullName: string; email: string; role: string } | null;
+  reason?: string;
+  company?: { name?: string; rcNumber?: string };
+  /** 'bvn' | 'nin' for an automatic approval. */
+  method?: string;
+}
+
 export interface AdminUser {
   id: string;
   email: string;
@@ -74,15 +89,52 @@ export interface AdminDocument {
   user?: { id: string; fullName: string; email: string };
 }
 
+export interface WalletUserBrief {
+  id: string;
+  fullName: string;
+  email: string;
+  role: string;
+  kycStatus: string;
+}
+
 export interface AdminTransaction {
   id: string;
   userId: string;
   type: 'top_up' | 'purchase' | 'refund' | 'withdrawal';
-  amount: string;
+  amount: number | string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   reference: string;
   description?: string;
   createdAt: string;
+  completedAt?: string;
+  /** Who the money belongs to; null if the account no longer exists. */
+  user?: WalletUserBrief | null;
+}
+
+export interface AdminWithdrawal extends AdminTransaction {
+  bankAccount: { bankName: string; accountName: string; accountNumberLast4: string } | null;
+  /** What the vendor has left in their wallet right now. */
+  walletBalance: number | null;
+}
+
+export interface Money {
+  count: number;
+  amount: number;
+}
+
+export interface WalletSummary {
+  totalBalance: number;
+  totalPendingBalance: number;
+  walletCount: number;
+  withdrawals: { pending: Money & { oldestAt: string | null }; processing: Money };
+  last30Days: { topUps: Money; purchases: Money; refunds: Money; withdrawalsPaid: Money; withdrawalsFailed: Money };
+}
+
+export interface UserWalletView {
+  user: WalletUserBrief | null;
+  wallet: { balance: number; pendingBalance: number } | null;
+  recentTransactions: AdminTransaction[];
+  tokens: Record<'active' | 'reserved' | 'used' | 'expired', Money>;
 }
 
 export interface AdminOrder {

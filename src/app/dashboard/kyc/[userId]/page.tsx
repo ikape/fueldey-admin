@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { api, ApiError } from '@/lib/api';
-import { AdminUser } from '@/lib/types';
+import { AdminUser, KycHistoryEntry, Paginated } from '@/lib/types';
+import { DECISION_LABEL, DECISION_TONE, decidedByLabel, historyDetail } from '@/lib/kycHistory';
 import { companyTypeLabel, matchingDirectors } from '@/lib/kyc';
 import { Badge, statusTone } from '@/components/Badge';
 import { KycStatusControls } from '@/components/KycStatusControls';
@@ -27,6 +28,14 @@ export default async function KycReviewDetailPage({ params }: { params: Promise<
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) notFound();
     throw error;
+  }
+
+  // Their record is context for the decision, not the decision itself: never let it break the page.
+  let history: KycHistoryEntry[] = [];
+  try {
+    history = (await api.get<Paginated<KycHistoryEntry>>(`/users/admin/kyc/history?userId=${userId}&limit=20`)).data;
+  } catch {
+    history = [];
   }
 
   const isVendor = user.role === 'vendor';
@@ -125,6 +134,24 @@ export default async function KycReviewDetailPage({ params }: { params: Promise<
           </Link>
         </p>
       )}
+
+      <section className="mt-6 rounded-2xl border border-border bg-card p-4">
+        <h2 className="font-heading text-sm font-semibold text-foreground">KYC history</h2>
+        {history.length === 0 ? (
+          <p className="mt-2 text-sm text-muted">Nothing recorded for this account yet.</p>
+        ) : (
+          <ul className="mt-3 divide-y divide-border">
+            {history.map((e) => (
+              <li key={e.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2 text-sm">
+                <Badge tone={DECISION_TONE[e.decision]}>{DECISION_LABEL[e.decision]}</Badge>
+                <span className="text-foreground">{decidedByLabel(e)}</span>
+                <span className="text-muted">{historyDetail(e)}</span>
+                <span className="ml-auto text-xs text-muted">{new Date(e.at).toLocaleString()}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <div className="mt-8 border-t border-border pt-4">
         <p className="mb-2 text-xs text-muted">Decision:</p>
